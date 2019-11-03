@@ -7,3 +7,4 @@ inschriften <- read.csv("~/statprakt/inschriften.csv", encoding = "UTF-8")
 publicity <- read.csv("~/statprakt/publicity.csv", encoding = "UTF-8")
 # Orte der Tabula Peutingerina
 tabula <- read.csv("~/statprakt/tabula.csv", encoding = "UTF-8")
+typisiert <- read.csv("~statprakt/typisiert.csv", encoding = "UTF-8")
