@@ -38,3 +38,5 @@ counts$lng <- as.numeric(counts$lng)
 coordinates(counts) <- ~ lng + lat
 crs(counts) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 mapview(counts)
+
+require(ggmap)
