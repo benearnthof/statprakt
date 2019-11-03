@@ -1,8 +1,12 @@
 # importing data sets 
-# eintragungen ins crowdsourcing tool
-crowd <- read.csv("~/statprakt/crowd.csv", encoding = "UTF-8")
-# daten zu lateinischen inschriften
-inschriften <- read.csv("~/statprakt/inschriften.csv", encoding = "UTF-8")
-# publicity aktionen fuer das crowdsourcing tool
-publicity <- read.csv("~/statprakt/publicity.csv", encoding = "UTF-8")
+setwd("C:/Wd/statprakt")
+crowd <- read.csv("C:/Wd/statprakt/crowd.csv", encoding = "UTF-8", sep = ";")
+
+inschriften <- read.csv("C:/Wd/statprakt/inschriften.csv", encoding="UTF-8", header = TRUE, sep = ";", dec = ".", fill = TRUE)
+
+publicity <- read.csv("C:/Wd/statprakt/publicity.csv", encoding="UTF8", sep = ";")
+
+tabula <- read.csv("C:/Wd/statprakt/tabula.csv", encoding="UTF-8", sep = " ")
+
+
 
