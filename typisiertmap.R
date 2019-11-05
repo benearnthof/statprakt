@@ -1,30 +1,37 @@
-# analysis of inscriptions
-# https://geocompr.robinlovelace.net/adv-map.html
-# https://trucvietle.me/r/tutorial/2017/01/18/spatial-heat-map-plotting-using-r.html
-# https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html
-inschriften <- read.csv("~/statprakt/inschriften.csv", encoding = "UTF-8")
-require(sf)
-require(raster)
-require(sp)
-require(mapview)
-coords <- inschriften$Geodaten
+install.packages("dplyr")
+
+dplyr::count(typisiert, Crowd)
+#8825 Belege durch Crowdsourcing von insg. 86569 Belegen
+
+typisiert2 <- subset(typisiert, typisiert$Crowd==1)
+#Bilde Teilmenge mit Belegen durch Crowdsourcing
+
+install.packages(c("sf", "raster", "sp", "mapview"))
+coords <- typisiert$Georeferenz
 coords <- as.character(coords)
 
-test <- sub("POINT", "", coords)
-test <- sub("\\(", "", test)
-test <- sub("\\)", "", test)
+bsp <- sub("POINT", "", coords)
+bsp <- sub("\\(", "", bsp)
+bsp <- sub("\\)", "", bsp)
 
-list <- stringr::str_split(test, " ")
+head(bsp)
+
+list <- stringr::str_split(bsp, " ")
 one <- sapply(list, `[[`, 1)
 two <- sapply(list, `[[`, 2)
 
 lat <- two
 lng <- one
 
+library("sp")
+library("mapview")
+library("raster")
+
 points <- data.frame(lat = as.numeric(lat), lng = as.numeric(lng))
+points <- na.omit(points)
 coordinates(points) <- ~ lng + lat
 crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
-
+mapview(points)
 counts <- as.data.frame(table(coords))
 test <- sub("POINT\\(", "", counts$coords)
 test <- sub("\\)", "", test)
@@ -39,4 +46,4 @@ coordinates(counts) <- ~ lng + lat
 crs(counts) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 mapview(counts)
 
-require(ggmap)
+
