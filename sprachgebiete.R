@@ -55,11 +55,11 @@ gen_points <- function(sprachgebiet) {
 }
 
 romanic <- gen_points(sprachgebiete$Geodaten[1])
-plot(romanic)
+plot(romanic, add = F, pch = 20)
 # nice
 # rom       ger       sla       romger    gersla    romsla    romgersla
 germanic <- gen_points(sprachgebiete$Geodaten[2])
-plot(germanic)
+plot(germanic, col = "red",add = TRUE, pch = 20)
 slavic <- gen_points(sprachgebiete$Geodaten[3])
-plot(slavic)
+plot(slavic, col = "blue", add = TRUE, pch = 20)
 
