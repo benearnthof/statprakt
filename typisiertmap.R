@@ -31,7 +31,7 @@ points <- data.frame(lat = as.numeric(lat), lng = as.numeric(lng))
 points <- na.omit(points)
 coordinates(points) <- ~ lng + lat
 crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
-mapview(points)
+plot(points)
 counts <- as.data.frame(table(coords))
 test <- sub("POINT\\(", "", counts$coords)
 test <- sub("\\)", "", test)
