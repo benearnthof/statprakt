@@ -1,4 +1,4 @@
-install.packages("dplyr")
+#install.packages("dplyr")
 
 dplyr::count(typisiert, Crowd)
 #8825 Belege durch Crowdsourcing von insg. 86569 Belegen
@@ -6,7 +6,7 @@ dplyr::count(typisiert, Crowd)
 typisiert2 <- subset(typisiert, typisiert$Crowd==1)
 #Bilde Teilmenge mit Belegen durch Crowdsourcing
 
-install.packages(c("sf", "raster", "sp", "mapview"))
+#install.packages(c("sf", "raster", "sp", "mapview"))
 coords <- typisiert$Georeferenz
 coords <- as.character(coords)
 
