@@ -1,4 +1,4 @@
-install.packages("dplyr")
+#install.packages("dplyr")
 
 dplyr::count(typisiert, Crowd)
 #8825 Belege durch Crowdsourcing von insg. 86569 Belegen
@@ -6,7 +6,7 @@ dplyr::count(typisiert, Crowd)
 typisiert2 <- subset(typisiert, typisiert$Crowd==1)
 #Bilde Teilmenge mit Belegen durch Crowdsourcing
 
-install.packages(c("sf", "raster", "sp", "mapview"))
+#install.packages(c("sf", "raster", "sp", "mapview"))
 coords <- typisiert$Georeferenz
 coords <- as.character(coords)
 
@@ -31,7 +31,7 @@ points <- data.frame(lat = as.numeric(lat), lng = as.numeric(lng))
 points <- na.omit(points)
 coordinates(points) <- ~ lng + lat
 crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
-plot(points)
+mapview(points)
 counts <- as.data.frame(table(coords))
 test <- sub("POINT\\(", "", counts$coords)
 test <- sub("\\)", "", test)
