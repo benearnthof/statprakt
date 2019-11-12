@@ -1,4 +1,5 @@
 # descriptive analysis of the crowdsourcing data
+crowd <- 
 library(ggplot2)
 plot(crowd$Kategorie)
 ggplot(data = crowd, mapping = aes(x = Kategorie)) +
@@ -18,7 +19,7 @@ ggplot(crowd,
                      function(x)-length(x)))) +
   geom_bar()
 
-typisiert <- read.csv("~/Desktop/wd/statprakt/typisiert.csv", encoding="UTF8")
+typisiert <- read.csv("~/Desktop/wd/statprakt/typisiert.csv", encoding = "UTF8")
 crowdtyp <- typisiert[typisiert$Crowd == 1,]
 head(crowdtyp)
 nrow(crowdtyp)
@@ -61,7 +62,7 @@ pubdays <- publicity$Datum[-1]
 pubdays <- as.Date(pubdays)
 ?match
 # these are the positions we want to add vertical lines at in the plot
-index <- match(pubdays, df$days)
+index <- match(pubdays, table$days)
 # there are a few NA entries because no corresponding match was found. 
 pubdays[is.na(index)]
 # 10 days to be exact. If we fill in the days table with 0 entries on days with 
@@ -86,6 +87,28 @@ plot <- ggplot(df, aes(x = days, y = freq)) + geom_bar(stat = "identity")
 
 for (i in seq_along(pubdays)) {
   plot <- plot + 
-  geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.2)
+  geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.5)
 }
 plot
+
+ende <- df[(nrow(df) - 120):nrow(df),]
+plot_ende <-  ggplot(ende, aes(x = days, y = freq)) + geom_bar(stat = "identity")
+for (i in seq_along(pubdays)) {
+  plot_ende <- plot_ende + 
+    geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.5)
+}
+plot_ende
+
+
+diffs <- numeric()
+for (i in seq_along(dates)) {
+  diffs[i] <- dates[i + 1] - dates[i]
+}
+
+x <- df$freq
+x2 <- data.table::shift(x, n = -1L)
+x <- x[-length(x)]
+x2 <- x2[-length(x2)]
+cor(x, x2)
+# better way to calc autocorrelation: stats::acf
+stats::acf(df$freq, lag.max = 20, type = "correlation")
