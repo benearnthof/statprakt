@@ -1,7 +1,7 @@
 # importing data sets 
 <<<<<<< HEAD
 setwd("~/statprakt")
-crowd <- read.csv("~/statprakt/crowd.csv", encoding = "UTF-8", sep = ",")
+crowd <- read.csv("~/statprakt/crowd01.csv", encoding = "UTF-8", sep = ",")
 
 inschriften <- read.csv("~/statprakt/inschriften.csv", encoding="UTF-8", header = TRUE, sep = ",", dec = ".", fill = TRUE)
 
