@@ -48,3 +48,10 @@ summary(Länge_typisiert)
 summary(Breite_typisiert) 
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #44.12   46.73   47.23   47.21   47.79   48.29 
+
+typisiert2$Georeferenz %in% crowd01$Georeferenz
+sum(typisiert2$Georeferenz %in% crowd01$Georeferenz) == nrow(typisiert2)
+#TRUE
+#Für eine weitere Analyse reicht der Datensatz "crowd01",
+#da "typisiert2" eine Teilmenge von "crowd01" ist und
+#alle notwendigen Daten in diesem Datensatz vorhanden sind
