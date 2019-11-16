@@ -41,7 +41,8 @@ mlt$test2[8] <- "Land"
 ggplot(mlt, aes(reorder(x = test2, - value), y = value)) + 
   geom_bar(stat = "identity", fill = "brown1") + 
   geom_text(aes(label = value), vjust = 0) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "")
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "") + 
+  ggtitle("Anzahl der Einträge je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
 
 #"Milch" = Milchverarbeitung
 #"Holz" = "Holzverarbeitung" 
