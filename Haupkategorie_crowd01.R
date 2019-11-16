@@ -35,13 +35,13 @@ mlt <- melt(table(test2))
 
 mlt$test2 <- as.character(mlt$test2)
 which(mlt$test2 == "Milchverarbeitung")
-mlt$test2[9] <- "Milch"
+mlt$test2[9] <- "Milchv."
 
 which(mlt$test2 == "Holzverarbeitung")
-mlt$test2[6] <- "Holz"
+mlt$test2[6] <- "Holzv."
 
 which(mlt$test2 == "Landschaftsformationen")
-mlt$test2[8] <- "Land"
+mlt$test2[8] <- "Landf."
 
 ggplot(mlt, aes(reorder(x = test2, - value), y = value)) + 
   geom_bar(stat = "identity", fill = "brown1") + 
@@ -56,8 +56,8 @@ ggplot(mlt, aes(reorder(x = test2, - mlt$relativ), y = mlt$relativ)) +
   geom_bar(stat = "identity", fill = "brown1") + 
   geom_text(aes(label = mlt$relativ), vjust = -0.5) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "", y = "rel. Häufigkeit") + 
-  ggtitle("Anzahl der Einträge je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
+  ggtitle("Anteil der Einträge je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
 
-#"Milch" = Milchverarbeitung
-#"Holz" = "Holzverarbeitung" 
-#"Land" = Landschaftsformationen
+#"Milchv." = Milchverarbeitung
+#"Holzv." = "Holzverarbeitung" 
+#"Landf." = Landschaftsformationen
