@@ -1,13 +1,18 @@
+#Lade "ggplot2"
 library(ggplot2)
 
+# Entferne Duplikate, im einen Überblick über die Hauptkategorien zu erlangen
 Hauptkategorie2 <- unique(crowd01$Hauptkategorie)
+
 #[1] Milchverarbeitung      Viehhaltung            Holzverarbeitung      
 #[4] Allgemein              Backen                 Ackerbau              
 #[7] Fauna                  Flora                  Küche                 
 #[10] Zeit                   Landschaftsformationen Wetter                
 #12 Levels: Ackerbau Allgemein Backen Fauna Flora Holzverarbeitung ... Zeit
 
+#absolute Häufigkeiten der zwölf Hauptkategorien
 table(crowd01$Hauptkategorie)
+
 #Ackerbau              Allgemein                 Backen 
 #389                   2047                    412 
 #Fauna                  Flora       Holzverarbeitung 
@@ -17,7 +22,7 @@ table(crowd01$Hauptkategorie)
 #Viehhaltung                 Wetter                   Zeit 
 #3724                    356                    129 
 
-
+#Erstelle Barplot von den abs. Häufigkeiten der Belege je Hauptkategorie
 ggplot(crowd01, aes(x = reorder(Hauptkategorie, Hauptkategorie,
   function(x)-length(x)))) + geom_bar(fill = "blue") +
   theme(axis.text.x = element_text(angle = 90)) + labs(x = "") 
