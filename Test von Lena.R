@@ -8,3 +8,4 @@
 #Tabelle "typisiert" Daten rausfiltern
 #Tabelle "typisiert" Spalte: Georeferenz in 2 verschiedene Spalten aufteilen
 #gsub("Point", "", typisiert$Georeferenz) 
+install.packages(c("sf", "raster", "sp", "mapview"))
