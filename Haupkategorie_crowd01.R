@@ -49,6 +49,15 @@ ggplot(mlt, aes(reorder(x = test2, - value), y = value)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "") + 
   ggtitle("Anzahl der Einträge je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
 
+mlt$relativ <- mlt$value/sum(mlt$value)
+mlt$relativ <- round(mlt$relativ, digits = 2)
+
+ggplot(mlt, aes(reorder(x = test2, - mlt$relativ), y = mlt$relativ)) + 
+  geom_bar(stat = "identity", fill = "brown1") + 
+  geom_text(aes(label = mlt$relativ), vjust = -0.5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "", y = "rel. Häufigkeit") + 
+  ggtitle("Anzahl der Einträge je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
+
 #"Milch" = Milchverarbeitung
 #"Holz" = "Holzverarbeitung" 
 #"Land" = Landschaftsformationen
