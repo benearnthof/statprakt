@@ -24,3 +24,5 @@ count(Id_Informant==14858)
 
 
 
+
+
