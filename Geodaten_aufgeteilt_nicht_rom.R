@@ -19,6 +19,8 @@ zweite_Spalte <- sapply(aufgetrennt_nicht_rom, `[[`, 2)
 Breite_nicht_rom <- zweite_Spalte
 Laenge_nicht_rom <- erste_Spalte
 
+nicht_rom$Breite <- Breite_nicht_rom
+nicht_rom$Laenge <- Laenge_nicht_rom
 
 #Map für nicht-rom erstelllen
 
