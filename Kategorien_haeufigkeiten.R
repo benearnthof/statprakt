@@ -32,11 +32,14 @@ head(mlt$relative)
 #Plot mit relativen Häfigkeiten erstellen
 test2 <- melt(crowd01$Kategorie)
 plot_relative <- melt(table(test2))
-ggplot(plot_relative,aes(reorder(x = test2, -value), y = mlt$relative)) + 
+plot_relative$relative <- round(plot_relative$value/(sum(plot_relative$value)), digits = 3)
+
+ggplot(plot_relative,aes(reorder(x = test2, -plot_relative$relative),
+                         y = plot_relative$relative)) + 
   geom_bar(stat = "identity", fill = "brown1", color = "black", alpha = 0.85) + 
-  geom_text(aes(label = mlt$relative), vjust = -0.5) +
+  geom_text(aes(label = plot_relative$relative), vjust = -0.5) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(x = "") + 
+  labs(x = "", y = "rel. Häufigkeit") + 
   ggtitle ("Anteil der Einträge je Kategorie") +
   theme(plot.title = element_text(hjust = 0.5))
 
