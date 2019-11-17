@@ -25,6 +25,11 @@ head(crowdtyp)
 nrow(crowdtyp)
 nrow(crowd)
 
+# the crowdsourced data entries in the typisiert data set seem to be contained
+# within the crowd data set. 
+test <- crowdtyp$Georeferenz %in% crowd$Georeferenz
+all.equal(sum(test), nrow(crowdtyp))
+
 summary(crowdtyp$Id_kategorie)
 summary(crowdtyp$Id_Konzept)
 hist(crowdtyp$Id_kategorie, breaks = 269)
@@ -99,6 +104,66 @@ for (i in seq_along(pubdays)) {
 }
 plot_ende
 
+# lets split df into 3 parts 2017, 2018 and 2019
+df2017 <- df[df$days <= "2017-12-31",]
+df2018 <- df[(df$days <= "2018-12-31") & (df$days >= "2018-01-01"),]
+df2019 <- df[df$days > "2018-12-31",]
+
+headntail = function(x, ...) {
+  h <- head(x, ...)
+  t <- tail(x, ...)
+  rbind(h, t)
+}
+lapply(list(df2017, df2018, df2019), headntail, n = 5L)
+# everything seems in order
+# split pubdays into reqired format
+pubdays2017 <- pubdays[pubdays <= "2017-12-31"] 
+pubdays2018 <- pubdays[pubdays > "2017-12-31" & pubdays <= "2018-12-31"]
+pubdays2019 <- pubdays[pubdays > "2018-12-31"]
+
+plt_publicity <- function(df, days, year, size = 2) {
+  plt <- ggplot(df, aes(x = days, y = freq)) +
+    geom_bar(stat = "identity", col = "black") +
+    ylim(0, 600) +
+    theme_bw() + 
+    theme(axis.text = element_text(size = 18, face = "bold"),
+          axis.title = element_text(size = 18, face = "bold")) +
+    xlab(year) +
+    ylab("Anzahl Einträge in Datenbank")
+  # constructing values for geom_segment
+  values <- numeric(length = length(days))
+  for (i in seq_along(days)) {
+    tmp <- df$freq[df$days == as.Date(days[i])]
+    values[i] <- if (length(tmp) == 0) {
+      0
+    } else {tmp}
+  }
+  segment_data = data.frame(
+    x = as.Date(days),
+    xend = as.Date(days), 
+    y = values,
+    yend = rep(600, times = length(days))
+  )
+  # adding the segments to the plot
+  plt <- plt + geom_segment(data = segment_data, 
+                            aes(x = x, y = y, xend = xend, yend = yend), 
+                            col = "#ff8000", alpha = 0.75, size = size)
+  plt
+}
+
+plt_publicity(df2017, pubdays2017, "2017", size = 1.4)
+plt_publicity(df2018, pubdays2018, "2018", size = 1.4)
+plt_publicity(df2019, pubdays2019, "2019", size = 1.4)
+
+
+plot2017 <- ggplot(df2017, aes(x = days, y = freq)) +
+  geom_bar(stat = "identity") + 
+  theme_bw()
+for (i in seq_along(pubdays)) {
+  plot2017 <- plot2017 + 
+    geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.5, size = 2)
+}
+plot2017
 
 
 x <- df$freq
@@ -225,6 +290,52 @@ points(df$lng, df$lat, col = "red", cex = log(df$Freq) + 1)
 box <- sp_crowd@bbox
 box[2,] <- c(44, 49)
 map <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner") 
-ggmap(map) +
-  geom_point(aes(x = lng, y = lat, size = log(Freq)),
-             data = df, alpha = .5, col = "#F00000")
+plt <- ggmap(map) +
+  geom_point(aes(x = lng, y = lat, size = sqrt(Freq), col = sqrt(Freq)),
+             data = df, alpha = .5)
+plt2 <- ggmap(map) +
+  stat_density2d(aes(x = lng, y = lat),
+  col = "blue", fill = "blue", alpha = 0.1, size = 1, bins = 10, data = df, geom = "polygon"
+) 
+plt2
+
+# todo: plot sprachraum
+# welche publicity aktionen haben am meisten gebracht?
+# wann waren poweruser am werk?
+# hat dies einen Einfluss auf den Erfolg von publicity Aktionen?
+
+# es scheint einen peak bei Rosenheim zu geben. 
+# Betrachtet man die 10 Tage nach dem Artikel auf Rosenheim24.de ergibt sich:
+rosenheim <- df2018[df2018$days >= "2018-06-19" & df2018$days < "2018-06-24",]
+sum(rosenheim$freq)
+# 679 Einträge innerhalb von 5 (eigentlich 4) Tagen!
+
+crowd$Erfasst_Am <- as.character(crowd$Erfasst_Am)
+
+rosenheim2 <- crowd[crowd$Erfasst_Am >= "2018-06-19" & crowd$Erfasst_Am < "2018-06-24", ]
+sort(table(rosenheim2$Id_Informant), decreasing = TRUE)
+# nur 2 user mit mehr als 100 einträgen
+# lasst uns rausfinden was den poweruser mit 611 einträgen motiviert hat
+
+poweruser <- unlist(dimnames(head(sort(table(crowd$Id_Informant), decreasing = TRUE), n = 10L)))
+
+powerdata <- crowd[crowd$Id_Informant %in% poweruser,]
+nrow(powerdata)
+userdata1 <- powerdata[powerdata$Id_Informant == poweruser[1],]
+
+
+get_datestimes <- function(x) {
+    list <- stringr::str_split(x, " ")
+    dates <- as.character(sapply(list, `[[`, 1))
+    times <- as.character(sapply(list, `[[`, 2))
+    list(dates = dates, times = times)
+}
+powerdates <- get_datestimes(powerdata$Erfasst_Am)[1]
+sort(table(powerdates), decreasing = TRUE)
+
+user1dates <- get_datestimes(userdata1$Erfasst_Am)[1]
+table(user1dates)
+# was passierte am 12.08.?
+publicity$Datum <- as.Date(publicity$Datum)
+publicity[publicity$Datum >= "2019-08-02" & publicity$Datum < "2019-08-22",]
+# Verschiedene Beitr#ge 
