@@ -1,7 +1,7 @@
 ---
 title: "Verba Alpina"
 subtitle: "Anfängerpraktikum Wintersemester 2019"
-author: "Julia Höpfler, Lena Zelinka, Benedikt Arnthof"
+author: "Julia Höpler, Lena Zelinka, Benedikt Arnthof"
 date: "17.07.2019"
 output: beamer_presentation
 includes:
