@@ -62,7 +62,7 @@ plt_publicity(df2019, pubdays2019, "2019", size = 1.4)
 ```
 
 ## Dichteplot der Einträge durch das Crowdsourcing-Tool (blau)
-### Die zehn roten Punkte geben die Orte der User an, die die meisten Einträge gemacht haben(Power User)
+### Die roten Punkte geben die Orte der User an, die die meisten Einträge gemacht haben (Power User)
 
 ```{r spatial, include=FALSE}
 sp_crowd <- readRDS("sp_crowd.RDS")
