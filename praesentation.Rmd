@@ -1,0 +1,88 @@
+---
+title: "Verba Alpina"
+subtitle: "Anfängerpraktikum Wintersemester 2019"
+author: "Julia Höpfler, Lena Zelinka, Benedikt Arnthof"
+date: "17.07.2019"
+output: beamer_presentation
+includes:
+      in_header: header_pagenrs.tex
+---
+  
+  ```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE)
+source("presentation_imports.R")
+```
+
+## Gliederung
+* Verba Alpina -- Ein Überblick
+* Motivation
+* Daten -- Zugang und Aufbereitung
+* Ausblick 
+* Packages
+* Diskussion
+
+## Verba Alpina -- Ein Überblick
+#### Ziele des Projektes
+* Stichpunkt 1
+* Stichpunkt 2 
+* Stichpunkt 3
+
+
+## Motivation 
+* Stichpunkt 1
+* Stichpunkt 2
+```{r chunk1, echo=FALSE, fig.cap="Bild 1", out.width = '50%'}
+# knitr::include_graphics("image1.png")
+```
+
+## Daten -- Zugang und Aufbereitung
+```{r rawdata, echo = F, eval=T}
+# head2d(raw_data, n = c(5L, 5L))
+```
+* Datensatz online verfügbar
+* Insert URL here
+* Insgesamt X Teildatensätze für beide Projekte
+
+## Daten -- Aufbereitung
+* Was wurde für die Aufbereitung unternommen
+* Forschungsareal etc. 
+
+## Daten -- Visualisierung Forschungsgebiet
+```{r, areaofinterest, echo = F, fig.cap = "Forschungsgebiet Alpenraum"}
+# insert code to visualize area of interest here
+```
+
+## Resultate -- Erste Folie
+
+## Resultate -- Zweite Folie
+```{r result2, eval = T, echo = F, fig.height=5.5, fig.width=7.5}
+```
+
+## Resultate -- Dritte Folie
+```{r result3, eval = T, echo = F, fig.height=5.5, fig.width=7.5}
+```
+
+## Interpretation & Probleme
+* Punkt 1
+* Punkt 2
+
+### Weiteres:  
+* Punkt 3
+* Punkt 4
+
+## Ausblick 
+### Weitere Analysen sind möglich: 
+* Idee 1
+* Idee 2
+* Idee 3
+
+## Verwendete Packages & Literatur
+### Packages: 
+<font size="3"> Insert Packages Here</font>
+
+### Literatur:
+<font size="3"> Insert Literatur Here</font>
+
+
+## Diskussion
