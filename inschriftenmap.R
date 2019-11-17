@@ -21,6 +21,11 @@ two <- sapply(list, `[[`, 2)
 lat <- two
 lng <- one
 
+#in Datensatz Inschriften Spalte mit Breite und Länge hinzufügen
+inschriften$Laenge <- lng
+inschriften$Breite <- lat
+
+#map
 points <- data.frame(lat = as.numeric(lat), lng = as.numeric(lng))
 coordinates(points) <- ~ lng + lat
 crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
