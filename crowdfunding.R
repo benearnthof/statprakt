@@ -338,4 +338,29 @@ table(user1dates)
 # was passierte am 12.08.?
 publicity$Datum <- as.Date(publicity$Datum)
 publicity[publicity$Datum >= "2019-08-02" & publicity$Datum < "2019-08-22",]
-# Verschiedene Beitr#ge 
+# Verschiedene Beitr#ge im italienischen internet
+# lets find the geolocation of these points
+user1points <- crowd[crowd$Id_Informant == 14858,]
+user1points <- user1points$Georeferenz
+user1points <- get_coords(user1points)
+table(user1points)
+# es scheint der gleiche user zu sein, der ort ist für alle 611 einträge gleich
+# points der map hinzufügen
+
+userpoints <- crowd[crowd$Id_Informant %in% poweruser,]
+userpoints$points <- userpoints$Georeferenz
+userpoints$lng <- get_coords(userpoints$points)[[1]]
+userpoints$lat <- get_coords(userpoints$points)[[2]]
+
+uniquepoints <- userpoints[!duplicated(userpoints$Id_Informant), ]
+uniquepoints <- cbind(uniquepoints$Id_Informant, uniquepoints$lng, uniquepoints$lat)
+tbl <- table(crowd[crowd$Id_Informant %in% poweruser,]$Id_Informant)
+identical(uniquepoints[,1], as.numeric(unlist(dimnames(tbl))))
+# die reihenfolge ist identisch
+uniquepoints <- as.data.frame(uniquepoints)
+uniquepoints$count <- as.vector(tbl)
+names(uniquepoints) <- c("ID", "lng", "lat", "count")
+ 
+plt3 <- plt2 +
+  geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "red")
+plt3
