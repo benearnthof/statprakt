@@ -109,6 +109,10 @@ df2017 <- df[df$days <= "2017-12-31",]
 df2018 <- df[(df$days <= "2018-12-31") & (df$days >= "2018-01-01"),]
 df2019 <- df[df$days > "2018-12-31",]
 
+saveRDS(df2017, "df2017.RDS")
+saveRDS(df2018, "df2018.RDS")
+saveRDS(df2019, "df2019.RDS")
+
 headntail = function(x, ...) {
   h <- head(x, ...)
   t <- tail(x, ...)
@@ -120,6 +124,10 @@ lapply(list(df2017, df2018, df2019), headntail, n = 5L)
 pubdays2017 <- pubdays[pubdays <= "2017-12-31"] 
 pubdays2018 <- pubdays[pubdays > "2017-12-31" & pubdays <= "2018-12-31"]
 pubdays2019 <- pubdays[pubdays > "2018-12-31"]
+
+saveRDS(pubdays2017, "pubdays2017.RDS")
+saveRDS(pubdays2018, "pubdays2018.RDS")
+saveRDS(pubdays2019, "pubdays2019.RDS")
 
 plt_publicity <- function(df, days, year, size = 2) {
   plt <- ggplot(df, aes(x = days, y = freq)) +
@@ -282,11 +290,13 @@ coords <- get_coords(df$Var1)
 df$lng <- coords$lng
 df$lat <- coords$lat
 head(df)
+saveRDS(df, file = "lastone.RDS")
 library(scales)
 rescale()
 plot(newmap, xlim = sp_crowd@bbox[1,], ylim = sp_crowd@bbox[2,], asp = 0.75)
 points(df$lng, df$lat, col = "red", cex = log(df$Freq) + 1)
 
+saveRDS(sp_crowd, file = "sp_crowd.RDS")
 box <- sp_crowd@bbox
 box[2,] <- c(44, 49)
 map <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner") 
@@ -360,7 +370,8 @@ identical(uniquepoints[,1], as.numeric(unlist(dimnames(tbl))))
 uniquepoints <- as.data.frame(uniquepoints)
 uniquepoints$count <- as.vector(tbl)
 names(uniquepoints) <- c("ID", "lng", "lat", "count")
- 
+
+saveRDS(uniquepoints, file = "uniquepoints.RDS")
 plt3 <- plt2 +
   geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "red")
 plt3

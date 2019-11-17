@@ -7,94 +7,11 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+require(ggplot2)
+require(ggmap)
 ```
 
-```{r zeitliche Verteilung(Publicity-Aktionen und Einträge), echo=FALSE}
-crowd <- read.csv("C:/Wd/statprakt/crowd01.csv", encoding = "UTF-8", sep = ",")
-publicity <- read.csv("C:/Wd/statprakt/publicity.csv", encoding = "UTF-8", sep = ",")
-
-#Jahr 2017
-library(ggplot2)
-require(magrittr)
-grouped <- crowd %>% dplyr::group_by(Id_Informant)
-
-require(stringr)
-days <- stringr::str_split(string = crowd$Erfasst_Am, pattern = " ")
-days <- sapply(days, `[[`, 1)
-plot(table(days))
-table <- as.data.frame(table(days))
-hist(table(days))
-require(ggplot2)
-
-ggplot(table, aes(x = days, y = Freq)) + geom_bar(stat = "identity") +
-  geom_vline(xintercept = 221, col = "red", alpha = 0.5)
-
-# we can match days to add vertical lines at the corresponding publicity event days
-
-  # 2001 seems to be an outlier
-pubdays <- publicity$Datum[-1]
-pubdays <- as.Date(pubdays)
-
-# these are the positions we want to add vertical lines at in the plot
-index <- match(pubdays, table$days)
-
-# there are a few NA entries because no corresponding match was found. 
-pubdays[is.na(index)]
-
-# 10 days to be exact. If we fill in the days table with 0 entries on days with 
-# no added entries we should be able to match without NA entries. 
-
-# lets generate a vector of days from the start to the end
-start <- as.Date(min(days))
-end <- as.Date(max(days))
-df <- data.frame(days = seq(from = start, to = end, by = 1))
-df$freq <- 0
-
-
-days <- as.Date(days)
-table$days <- as.Date(table$days)
-index <- match(table$days, df$days)
-df$freq[index] <- table$Freq
-
-ggplot(df, aes(x = days, y = freq)) + geom_bar(stat = "identity") +
-  geom_vline(xintercept = as.Date("2018-05-02"), col = "red")
-# we can add vertical lines indeed!
-# add all the lines for all publicity events
-
-plot <- ggplot(df, aes(x = days, y = freq)) + geom_bar(stat = "identity")
-
-for (i in seq_along(pubdays)) {
-  plot <- plot + 
-  geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.5)
-}
-plot
-
-ende <- df[(nrow(df) - 120):nrow(df),]
-plot_ende <-  ggplot(ende, aes(x = days, y = freq)) + geom_bar(stat = "identity")
-for (i in seq_along(pubdays)) {
-  plot_ende <- plot_ende + 
-    geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.5)
-}
-plot_ende
-
-
-# lets split df into 3 parts 2017, 2018 and 2019
-df2017 <- df[df$days <= "2017-12-31",]
-df2018 <- df[(df$days <= "2018-12-31") & (df$days >= "2018-01-01"),]
-df2019 <- df[df$days > "2018-12-31",]
-
-headntail = function(x, ...) {
-  h <- head(x, ...)
-  t <- tail(x, ...)
-  rbind(h, t)
-}
-lapply(list(df2017, df2018, df2019), headntail, n = 5L)
-# everything seems in order
-# split pubdays into reqired format
-pubdays2017 <- pubdays[pubdays <= "2017-12-31"] 
-pubdays2018 <- pubdays[pubdays > "2017-12-31" & pubdays <= "2018-12-31"]
-pubdays2019 <- pubdays[pubdays > "2018-12-31"]
-
+```{r zeitliche Verteilung(Publicity-Aktionen und Eintraege), echo=FALSE}
 plt_publicity <- function(df, days, year, size = 2) {
   plt <- ggplot(df, aes(x = days, y = freq)) +
     geom_bar(stat = "identity", col = "black") +
@@ -103,7 +20,7 @@ plt_publicity <- function(df, days, year, size = 2) {
     theme(axis.text = element_text(size = 18, face = "bold"),
           axis.title = element_text(size = 18, face = "bold")) +
     xlab(year) +
-    ylab("Anzahl Einträge in Datenbank")
+    ylab("Anzahl Eintraege in Datenbank")
   # constructing values for geom_segment
   values <- numeric(length = length(days))
   for (i in seq_along(days)) {
@@ -124,26 +41,48 @@ plt_publicity <- function(df, days, year, size = 2) {
                             col = "#ff8000", alpha = 0.75, size = size)
   plt
 }
-
+df2017 <- readRDS("df2017.RDS")
+df2018 <- readRDS("df2018.RDS")
+df2019 <- readRDS("df2019.RDS")
+pubdays2017 <- readRDS("pubdays2017.RDS")
+pubdays2018 <- readRDS("pubdays2018.RDS")
+pubdays2019 <- readRDS("pubdays2019.RDS")
 plt_publicity(df2017, pubdays2017, "2017", size = 1.4)
-
-#Jahr 2018
 plt_publicity(df2018, pubdays2018, "2018", size = 1.4)
-
-#Jahr 2019
 plt_publicity(df2019, pubdays2019, "2019", size = 1.4)
 ```
 
-```{r Poweruser, echo=FALSE}
-
+```{r spatial, echo=TRUE}
+sp_crowd <- readRDS("sp_crowd.RDS")
+box <- sp_crowd@bbox
+box[2,] <- c(44, 49)
+df <- readRDS("lastone.RDS")
+map <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner") 
+plt <- ggmap(map) +
+  geom_point(aes(x = lng, y = lat, size = sqrt(Freq), col = sqrt(Freq)),
+             data = df, alpha = .5)
+plt
+# Räumliche Verteilung der Einträge in die Datenbank
+plt2 <- ggmap(map) +
+  stat_density2d(aes(x = lng, y = lat),
+  col = "blue", fill = "blue", alpha = 0.1, size = 1, bins = 10, data = df, geom = "polygon"
+) 
+plt2
+# 2D Dichteplot der Verteilung der Einträge in die Datenbank
+uniquepoints <- readRDS("uniquepoints.RDS")
+plt3 <- plt2 +
+  geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "red")
+plt3
+# Lokationen der 10 "Poweruser"; Also der 10 Benutzer welche die meisten Beiträge
+# zur Datenbank hinzufügten.
 ```
 
-```{r räumliche Verteilung von Belege durch Crowdsourcing}
+```{r raeumliche Verteilung von Belege durch Crowdsourcing}
 require(sf)
 require(raster)
 require(sp)
 require(mapview)
-
+crowd01 <- read.csv("~/statprakt/crowd01.csv", encoding = "UTF-8", sep = ",")
 coords <- crowd01$Georeferenz
 coords <- as.character(coords)
 
@@ -156,37 +95,37 @@ one <- sapply(list2, `[[`, 1)
 two <- sapply(list2, `[[`, 2)
 
 Breite_crowd01 <- two
-Länge_crowd01 <- one
+Laenge_crowd01 <- one
 
-Breite_crowd01 <- as.numeric(lat2)
+Breite_crowd01 <- as.numeric(Breite_crowd01)
 
-Länge_crowd01 <- as.numeric(lng2)
+Laenge_crowd01 <- as.numeric(Laenge_crowd01)
 
 ## Kenngrößen 
 mean(Breite_crowd01)
 #47.18558
-mean(Länge_crowd01)
+mean(Laenge_crowd01)
 #11.11622
 #Mittelpunkt(11.11622 47.18558)
 
 ##Streuung
 var(Breite_crowd01)
 #0.970931
-var(Länge_crowd01)
+var(Laenge_crowd01)
 #3.41473
 
 sd(Breite_crowd01)
 #0.9853583
-sd(Länge_crowd01)
+sd(Laenge_crowd01)
 #1.847899
 
 range(Breite_crowd01)
 #37.67845 50.38567
-range(Länge_crowd01)
+range(Laenge_crowd01)
 #5.397995 16.268321
 
 ## Kenngrößen Zusammenfassung
-summary(Länge_crowd01)
+summary(Laenge_crowd01)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #5.398   9.870  11.618  11.116  12.313  16.268 
 
@@ -211,7 +150,7 @@ Hauptkategorie2 <- unique(crowd01$Hauptkategorie)
 #[10] Zeit                   Landschaftsformationen Wetter                
 #12 Levels: Ackerbau Allgemein Backen Fauna Flora Holzverarbeitung ... Zeit
 
-#absolute Häufigkeiten der zwölf Hauptkategorien
+#absolute Haeufigkeiten der zwölf Hauptkategorien
 table(crowd01$Hauptkategorie)
 
 #Ackerbau              Allgemein                 Backen 
@@ -223,7 +162,7 @@ table(crowd01$Hauptkategorie)
 #Viehhaltung                 Wetter                   Zeit 
 #3724                    356                    129 
 
-#Erstelle Barplot von den abs. Häufigkeiten der Belege je Hauptkategorie
+#Erstelle Barplot von den abs. Haeufigkeiten der Belege je Hauptkategorie
  
 library("reshape2")
 
@@ -245,7 +184,7 @@ ggplot(mlt, aes(reorder(x = test2, - value), y = value)) +
   geom_bar(stat = "identity", fill = "brown1") + 
   geom_text(aes(label = value), vjust = 0) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "") + 
-  ggtitle("Anzahl der Einträge je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
+  ggtitle("Anzahl der Eintraege je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
 
 mlt$relativ <- mlt$value/sum(mlt$value)
 mlt$relativ <- round(mlt$relativ, digits = 2)
@@ -253,8 +192,8 @@ mlt$relativ <- round(mlt$relativ, digits = 2)
 ggplot(mlt, aes(reorder(x = test2, - mlt$relativ), y = mlt$relativ)) + 
   geom_bar(stat = "identity", fill = "brown1") + 
   geom_text(aes(label = mlt$relativ), vjust = -0.5) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "", y = "rel. Häufigkeit") + 
-  ggtitle("Anteil der Einträge je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "", y = "rel. Haeufigkeit") + 
+  ggtitle("Anteil der Eintraege je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
 
 #"Milchv." = Milchverarbeitung
 #"Holzv." = "Holzverarbeitung" 
@@ -263,7 +202,7 @@ ggplot(mlt, aes(reorder(x = test2, - mlt$relativ), y = mlt$relativ)) +
 
 ```{r Kategorie, echo=FALSE}
 library(reshape2)
-#Plot über absolute Häufigkeiten
+#Plot über absolute Haeufigkeiten
 test2 <- melt(crowd01$Kategorie)
 plot_Kategorie <- melt(table(test2))
 ggplot(plot_Kategorie,aes(reorder(x = test2, -value), y = value)) + 
@@ -271,15 +210,15 @@ ggplot(plot_Kategorie,aes(reorder(x = test2, -value), y = value)) +
   geom_text(aes(label = value), vjust = -0.5) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(x = "") + 
-  ggtitle ("Anzahl der Einträge je Kategorie") +
+  ggtitle ("Anzahl der Eintraege je Kategorie") +
   theme(plot.title = element_text(hjust = 0.5))
 
 
-#relativen Häufigkeiten berechnet
+#relativen Haeufigkeiten berechnet
 mlt$relative <- mlt$value/(sum(mlt$value))
 mlt$relative <- round(mlt$relative, digits = 3)
 head(mlt$relative)
-#Plot mit relativen Häfigkeiten erstellen
+#Plot mit relativen Haefigkeiten erstellen
 test2 <- melt(crowd01$Kategorie)
 plot_relative <- melt(table(test2))
 plot_relative$relative <- round(plot_relative$value/(sum(plot_relative$value)), digits = 3)
@@ -289,8 +228,8 @@ ggplot(plot_relative,aes(reorder(x = test2, -plot_relative$relative),
   geom_bar(stat = "identity", fill = "brown1", color = "black", alpha = 0.85) + 
   geom_text(aes(label = plot_relative$relative), vjust = -0.5) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(x = "", y = "rel. Häufigkeit") + 
-  ggtitle ("Anteil der Einträge je Kategorie") +
+  labs(x = "", y = "rel. Haeufigkeit") + 
+  ggtitle ("Anteil der Eintraege je Kategorie") +
   theme(plot.title = element_text(hjust = 0.5))
 
 
