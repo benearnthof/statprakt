@@ -38,3 +38,5 @@ head(insch_crds)
 coordinates(insch_crds) <- ~ lng + lat
 plot(insch_crds)
 plot(crds, col = "red", add = TRUE)
+
+head(inschriften)
