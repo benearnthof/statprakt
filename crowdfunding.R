@@ -375,3 +375,6 @@ saveRDS(uniquepoints, file = "uniquepoints.RDS")
 plt3 <- plt2 +
   geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "red")
 plt3
+
+# kategorie maps hinzufügen 
+
