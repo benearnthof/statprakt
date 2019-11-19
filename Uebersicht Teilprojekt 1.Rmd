@@ -1,17 +1,26 @@
 ---
 title: "Übersicht über bisherige Ergebnisse"
-author: "Julia Hoepler"
-date: "17 11 2019"
+author: "Julia Hoepler, Lena Zelinka, Benedikt Arnthof"
+date: "17.11.2019"
 output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, 
+                      eval = TRUE,
+                      out.width = "80%",
+                      fig.align = "center")
 require(ggplot2)
 require(ggmap)
 ```
 
-```{r zeitliche Verteilung(Publicity-Aktionen und Eintraege), echo=FALSE}
+
+## Zeitliche Verteilung der Publicity-Aktionen und der Eintraege in das Crowdsourcing-Tool:
+### Graphik dreigeteilt in die Jahre 2017, 2018 und 2019
+### orangefarbene Balken stellen die Publicity-Aktionen dar
+### schwarze Balken stellen Belege dar
+
+```{r zeitliche Verteilung(Publicity-Aktionen und Eintraege), echo=FALSE, warning=FALSE}
 plt_publicity <- function(df, days, year, size = 2) {
   plt <- ggplot(df, aes(x = days, y = freq)) +
     geom_bar(stat = "identity", col = "black") +
@@ -52,7 +61,10 @@ plt_publicity(df2018, pubdays2018, "2018", size = 1.4)
 plt_publicity(df2019, pubdays2019, "2019", size = 1.4)
 ```
 
-```{r spatial, echo=TRUE}
+## Dichteplot der Einträge durch das Crowdsourcing-Tool (blau)
+### Die roten Punkte geben die Orte der User an, die die meisten Einträge gemacht haben (Power User)
+
+```{r spatial, include=FALSE}
 sp_crowd <- readRDS("sp_crowd.RDS")
 box <- sp_crowd@bbox
 box[2,] <- c(44, 49)
@@ -73,11 +85,18 @@ uniquepoints <- readRDS("uniquepoints.RDS")
 plt3 <- plt2 +
   geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "red")
 plt3
-# Lokationen der 10 "Poweruser"; Also der 10 Benutzer welche die meisten Beiträge
+# Lokationen der 10 "Power User"; Also der 10 Benutzer welche die meisten Beiträge
 # zur Datenbank hinzufügten.
 ```
+```{r Dichteplot, Power User, echo = FALSE, warning=FALSE}
+uniquepoints <- readRDS("uniquepoints.RDS")
+plt3 <- plt2 +
+  geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "red")
+plt3
+```
 
-```{r raeumliche Verteilung von Belege durch Crowdsourcing}
+## Ein paar Kenngroeßen für einen besseren Überblick:
+```{r raeumliche Verteilung, include=FALSE}
 require(sf)
 require(raster)
 require(sp)
@@ -100,67 +119,48 @@ Laenge_crowd01 <- one
 Breite_crowd01 <- as.numeric(Breite_crowd01)
 
 Laenge_crowd01 <- as.numeric(Laenge_crowd01)
+```
 
+```{r raeumliche Verteilung, Kenngroeßen, warning=FALSE}
 ## Kenngrößen 
+# Mittelwert von den Breitengraden in "crowd01"
 mean(Breite_crowd01)
-#47.18558
+
+# Mittelwert von den Laengengraden in "crowd01"
 mean(Laenge_crowd01)
-#11.11622
-#Mittelpunkt(11.11622 47.18558)
 
-##Streuung
+## Streuung
+
+# Varianz der Breitengrade
 var(Breite_crowd01)
-#0.970931
-var(Laenge_crowd01)
-#3.41473
 
+# Varianz der Laengengrade
+var(Laenge_crowd01) 
+
+# Standardabweichung der Breitengrade
 sd(Breite_crowd01)
-#0.9853583
-sd(Laenge_crowd01)
-#1.847899
 
-range(Breite_crowd01)
-#37.67845 50.38567
-range(Laenge_crowd01)
-#5.397995 16.268321
+# Standardabweichung der Laengengrade
+sd(Laenge_crowd01)
+
+# Variationsbreite der Breitengrade
+
+# Variationsgrade der Laengengrade
+range(Laenge_crowd01) 
 
 ## Kenngrößen Zusammenfassung
 summary(Laenge_crowd01)
-# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#5.398   9.870  11.618  11.116  12.313  16.268 
 
 summary(Breite_crowd01)
-# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#37.68   46.47   47.15   47.19   47.84   50.39 
 ```
 
-```{r Crowd map}
+## absolute und relative Häufigkeit der Hauptkategorien
 
-```
-
-```{r Hauptkategorie, echo=FALSE}
+```{r Hauptkategorie, echo=FALSE, warning=FALSE}
 library(ggplot2)
 
-# Entferne Duplikate, im einen Überblick über die Hauptkategorien zu erlangen
+#Entferne Duplikate, im einen Überblick über die Hauptkategorien zu erlangen
 Hauptkategorie2 <- unique(crowd01$Hauptkategorie)
-
-#[1] Milchverarbeitung      Viehhaltung            Holzverarbeitung      
-#[4] Allgemein              Backen                 Ackerbau              
-#[7] Fauna                  Flora                  Küche                 
-#[10] Zeit                   Landschaftsformationen Wetter                
-#12 Levels: Ackerbau Allgemein Backen Fauna Flora Holzverarbeitung ... Zeit
-
-#absolute Haeufigkeiten der zwölf Hauptkategorien
-table(crowd01$Hauptkategorie)
-
-#Ackerbau              Allgemein                 Backen 
-#389                   2047                    412 
-#Fauna                  Flora       Holzverarbeitung 
-#711                    728                    296 
-#Küche Landschaftsformationen      Milchverarbeitung 
-#274                    154                   4877 
-#Viehhaltung                 Wetter                   Zeit 
-#3724                    356                    129 
 
 #Erstelle Barplot von den abs. Haeufigkeiten der Belege je Hauptkategorie
  
@@ -195,13 +195,17 @@ ggplot(mlt, aes(reorder(x = test2, - mlt$relativ), y = mlt$relativ)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "", y = "rel. Haeufigkeit") + 
   ggtitle("Anteil der Eintraege je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
 
+##Bemerkung:
 #"Milchv." = Milchverarbeitung
 #"Holzv." = "Holzverarbeitung" 
 #"Landf." = Landschaftsformationen
 ```
 
-```{r Kategorie, echo=FALSE}
+## absolute und relative Häufigkeiten der Kategorien
+
+```{r Kategorie, echo=FALSE, warning=FALSE}
 library(reshape2)
+
 #Plot über absolute Haeufigkeiten
 test2 <- melt(crowd01$Kategorie)
 plot_Kategorie <- melt(table(test2))
@@ -218,6 +222,7 @@ ggplot(plot_Kategorie,aes(reorder(x = test2, -value), y = value)) +
 mlt$relative <- mlt$value/(sum(mlt$value))
 mlt$relative <- round(mlt$relative, digits = 3)
 head(mlt$relative)
+
 #Plot mit relativen Haefigkeiten erstellen
 test2 <- melt(crowd01$Kategorie)
 plot_relative <- melt(table(test2))
