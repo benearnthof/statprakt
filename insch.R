@@ -29,3 +29,12 @@ plot(crds)
 
 inschriften <- read.csv("~/statprakt/inschriften.csv", encoding = "UTF-8")
 head(inschriften)
+
+insch_coords <- get_coords(inschriften$Geodaten)
+
+insch_crds <- data.frame(lng = insch_coords[[1]], lat = insch_coords[[2]])
+names(insch_crds) <- c("lng", "lat")
+head(insch_crds)
+coordinates(insch_crds) <- ~ lng + lat
+plot(insch_crds)
+plot(crds, col = "red", add = TRUE)
