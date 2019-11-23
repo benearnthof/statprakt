@@ -2,6 +2,8 @@
 tab <- read.csv("~/statprakt/tabula.csv", encoding="UTF-8")
 head(tab)
 
+library("raster")
+library("sp")
 x <- tab$Geodaten
 dta <- x[-length(x)]
 
