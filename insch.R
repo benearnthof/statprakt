@@ -48,7 +48,7 @@ head(inschriften)
 # Frage: Gibt es eine Häufung romanischer Basistypen in der Nähe von Zentren 
 # lateinischer Inschriftenfunde?
 
-fulldta <- read.csv("~/statprakt/z_ling.csv", encoding="UTF-8")
+fulldta <- read.csv("~/statprakt/z_ling.csv", encoding = "UTF-8")
 # kommentar online: Distanzmaß für ähnlichkeit der Begriffe zueinander & Ranking
 summary(fulldta$Base_Type_Lang)
 
