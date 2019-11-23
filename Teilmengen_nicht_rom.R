@@ -31,9 +31,9 @@ insch <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 42,
                                   right = 20, top = 50), zoom = 7, maptype = "toner"))
 insch + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35)
 
-##Plotte die Teilmengen nach den Koordinaten
+###Plotte die Teilmengen nach den Koordinaten
 
-#gem_vor
+##gem_vor
 library("ggmap")
 coords1 <- get_coords(gem_vor$Georeferenz)
 
@@ -54,7 +54,7 @@ gv2 <- ggmap(get_stamenmap(bbox = c(left = 6.5, bottom = 45.2,
 gv2 <- gv2 + geom_point(aes(x = lng , y = lat), colour = "#e41a1c", data = df, alpha = 0.35)
 gv2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35)
 
-#gem_lat
+##gem_lat
 coords2 <- get_coords(gem_lat$Georeferenz)
 
 gem_lat$lat = coords2$lat
@@ -74,7 +74,7 @@ gl2 <- ggmap(get_stamenmap(bbox = c(left = 6.2, bottom = 45.3,
 gl2 <- gl2 + geom_point(aes(x = lng , y = lat), colour = "#ff7f00", data = df_gl, alpha = 0.35)
 gl2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35)
 
-#sla_vor
+##sla_vor
 coords3 <- get_coords(sla_vor$Georeferenz)
 
 sla_vor$lat = coords3$lat
@@ -94,7 +94,7 @@ sv2 <- ggmap(get_stamenmap(bbox = c(left = 12.5, bottom = 45.8,
 sv2 <- sv2 + geom_point(aes(x = lng , y = lat), colour = "#4daf4a", data = df_sv, alpha = 0.6, size = 2)
 sv2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.6, size = 2)
 
-#sla_lat
+##sla_lat
 coords4 <- get_coords(sla_lat$Georeferenz)
 
 sla_lat$lat = coords4$lat
@@ -108,7 +108,7 @@ sl <- ggmap(get_stamenmap(bbox = c(left = 5, bottom = 43.4,
 sl <- sl + geom_point(aes(x = lng , y =
                             lat), colour = "#984ea3", data = df_sl, alpha = 0.35)
 sl + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35)
-#3 Punkte von sla_lat im Süden Frankreichs
+#3 Punkte von sla_lat im Süden Frankreichs -> Ausreißer?
 
 #Heranzoomen des entsprechenden Gebiets
 sl2 <- ggmap(get_stamenmap(bbox = c(left = 12.6, bottom = 45.4, 
