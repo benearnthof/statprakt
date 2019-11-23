@@ -22,3 +22,4 @@ publicity <- read.csv("~/statprakt/publicity.csv", encoding = "UTF-8")
 tabula <- read.csv("~/statprakt/tabula.csv", encoding = "UTF-8")
 typisiert <- read.csv("~/statprakt/typisiert.csv", encoding = "UTF-8")
 
+fulldta <- read.csv("~/statprakt/z_ling.csv", encoding="UTF-8")

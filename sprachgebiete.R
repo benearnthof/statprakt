@@ -58,8 +58,42 @@ romanic <- gen_points(sprachgebiete$Geodaten[1])
 plot(romanic, add = F, pch = 20)
 # nice
 # rom       ger       sla       romger    gersla    romsla    romgersla
+# rot       blau      gruen     lila      orange    gelb      braun
 germanic <- gen_points(sprachgebiete$Geodaten[2])
 plot(germanic, col = "red",add = TRUE, pch = 20)
 slavic <- gen_points(sprachgebiete$Geodaten[3])
 plot(slavic, col = "blue", add = TRUE, pch = 20)
 
+sp_crowd <- readRDS("sp_crowd.RDS")
+box <- sp_crowd@bbox
+box[2,] <- c(44, 49)
+box[,1] <- c(4.884782, 43.43132)
+box[,2] <- c(16.47003, 48.36694)
+saveRDS(box, "bbox.RDS")
+require(ggmap)
+gebietsmap <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner") 
+romanic_df <- as.data.frame.matrix(romanic@coords)
+ggmap(gebietsmap)
+romanicmap <- ggmap(gebietsmap) +
+  geom_point(aes(x = lng, y = lat),
+             data = romanic_df, color = "skyblue", size = 1, alpha = 0.5)
+romanicmap
+
+# lets wrap that shit in a function
+colors <- c("#e41a1c", "#377eb8", "#ffff33", "#984ea3",
+            "#4daf4a", "#ff7f00", "#000000")
+
+ReamapR <- function(areas = sprachgebiete, cols = colors) {
+  box <- readRDS("bbox.RDS")
+  areamap <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner") 
+  areamap <- ggmap(areamap)
+  for (i in seq_len(nrow(areas))) {
+    df <- as.data.frame.matrix(gen_points(areas$Geodaten[i])@coords)
+    areamap <- areamap +
+      geom_point(aes(x = lng, y = lat),
+                 data = df, color = cols[i], size = 1, alpha = 0.5)
+  }
+  areamap
+}
+test <- ReamapR()
+test
