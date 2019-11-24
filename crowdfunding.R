@@ -298,15 +298,14 @@ points(df$lng, df$lat, col = "red", cex = log(df$Freq) + 1)
 
 saveRDS(sp_crowd, file = "sp_crowd.RDS")
 box <- sp_crowd@bbox
-box[2,] <- c(44, 49)
+box[2,] <- c(45, 50.5)
 map <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner") 
 plt <- ggmap(map) +
   geom_point(aes(x = lng, y = lat, size = sqrt(Freq), col = sqrt(Freq)),
              data = df, alpha = .5)
 plt2 <- ggmap(map) +
-  stat_density2d(aes(x = lng, y = lat),
-  col = "blue", fill = "blue", alpha = 0.1, size = 1, bins = 10, data = df, geom = "polygon"
-) 
+  stat_density2d(aes(x = lng, y = lat, fill=..level..), alpha = 0.15, bins = 25, data = df, geom = "polygon") +
+    scale_fill_gradient(low = "#377eb8", high = "#e41a1c")
 plt2
 
 # todo: plot sprachraum

@@ -96,4 +96,16 @@ ReamapR <- function(areas = sprachgebiete, cols = colors) {
   areamap
 }
 test <- ReamapR()
-test
+test 
+legendtest <- test + 
+  scale_colour_manual(name = 'the colour', 
+                      values = c("#e41a1c" = "#e41a1c",
+                                "#377eb8" = "#377eb8",
+                                "#ffff33" = "#ffff33",
+                                "#984ea3" = "#984ea3",
+                                "#4daf4a" = "#4daf4a",
+                                "#ff7f00" = "#ff7f00",
+                                "#000000" = "#000000"), 
+                      labels = c("rom", "ger", "sla", "romger", "gersla", "romsla", "romgersla"))
+legendtest
+# funktioniert nicht
