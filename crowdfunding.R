@@ -65,7 +65,7 @@ ggplot(table, aes(x = days, y = Freq)) + geom_bar(stat = "identity") +
   # 2001 seems to be an outlier
 pubdays <- publicity$Datum[-1]
 pubdays <- as.Date(pubdays)
-?match
+#?match
 # these are the positions we want to add vertical lines at in the plot
 index <- match(pubdays, table$days)
 # there are a few NA entries because no corresponding match was found. 
