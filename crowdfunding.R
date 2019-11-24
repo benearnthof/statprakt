@@ -372,8 +372,70 @@ names(uniquepoints) <- c("ID", "lng", "lat", "count")
 
 saveRDS(uniquepoints, file = "uniquepoints.RDS")
 plt3 <- plt2 +
-  geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "red")
+  geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "orange")
 plt3
 
 # kategorie maps hinzufügen 
+# 
+# Crowdsourcing: Rangordnung der erfolgreichsten Publicity Aktionen, Evtl gruppieren in Klassen und vergleich dieser. 
+# Visualisieren von Publicity Aktionen und impact auf Karten
+# Base Activity & Publicity Activity
+# Welche Kategorien wurden hauptsächlich beantwortet?
 
+head(crowd)
+head(publicity)
+which(diff(sort(pubdays)) == 1)
+# Auf 6 der 43 Publicityaktionen folgte direkt eine weitere Publicityaktion am 
+# nächsten Tag.
+start <- as.Date(min(days))
+end <- as.Date(max(days))
+df <- data.frame(days = seq(from = start, to = end, by = 1))
+df$freq <- 0
+days <- as.Date(days)
+table$days <- as.Date(table$days)
+index <- match(table$days, df$days)
+df$freq[index] <- table$Freq
+
+rosenheim <- df2018[df2018$days >= "2018-06-19" & df2018$days < "2018-06-24",]
+# benutze aehnliches matching fuer alle pubdays
+pubresults <- numeric(length = 43L)
+for (i in seq_along(pubdays)) {
+  pubresults[i] <- df$freq[df$days == sort(pubdays)[i]]
+}
+
+dfpubresults <- data.frame(pubresults = pubresults, dates = sort(pubdays))
+dfpubresults$aktion <- publicity$Bericht[2:length(publicity$Bericht)]
+
+top10 <- dfpubresults[order(dfpubresults$pubresults, decreasing = TRUE),][1:10,]
+top10$title <- c("Artikel auf rosenheim24.de", "Beitrag auf ddolomiti.eu", "Beitrag auf reddit.com/r/austria",
+                 "Vortrag in Sils-Maria", "Artikel auf zalp.ch", "Artikel in Der Bote", 
+                 "Interview ORF", "Interview BR", "Facebook: Französischer Spitzenreiter",
+                 "Facebook: Beste Gemeinde")
+# lets get the coordinates of the entries on the top 10 days to plot them on maps
+head(crowd)
+tmp <- str_split(crowd$Erfasst_Am, pattern = " ")
+tmp <- sapply(tmp, `[[`, 1)
+crowd$day <- tmp
+crowd$day <- as.Date(crowd$day)
+top10$dates <- as.Date(top10$dates)
+final <- crowd[crowd$day %in% top10$dates,]
+all.equal(nrow(final), sum(top10$pubresults))
+
+top10map <- ggmap(map) +
+  geom_count(aes(x = lng, y = lat), color = "red", alpha = 0.5, data = final)
+  
+top10map
+
+get_topxmap <- function(top = 1, dta = top10, mp = map) {
+  topx <- dta[top,] 
+  tmp <- str_split(crowd$Erfasst_Am, pattern = " ")
+  tmp <- sapply(tmp, `[[`, 1)
+  crowd$day <- tmp
+  crowd$day <- as.Date(crowd$day)
+  topx$dates <- as.Date(topx$dates)
+  final <- crowd[crowd$day %in% topx$dates,]
+  topxmap <- ggmap(mp) +
+    geom_count(aes(x = lng, y = lat), color = "red", alpha = 0.5, data = final) +
+    ggtitle(topx$title)
+  topxmap
+}
