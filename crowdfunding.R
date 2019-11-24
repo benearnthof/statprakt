@@ -426,6 +426,7 @@ top10map <- ggmap(map) +
   
 top10map
 
+# crowd has to have lon & lat columns
 get_topxmap <- function(top = 1, dta = top10, mp = map) {
   topx <- dta[top,] 
   tmp <- str_split(crowd$Erfasst_Am, pattern = " ")
@@ -439,3 +440,6 @@ get_topxmap <- function(top = 1, dta = top10, mp = map) {
     ggtitle(topx$title)
   topxmap
 }
+
+top1map <- get_topxmap(1)
+ggsave("top1map.png", plot = top1map, width = 16, height = 10, units = "cm")
