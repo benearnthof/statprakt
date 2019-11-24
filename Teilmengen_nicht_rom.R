@@ -45,20 +45,26 @@ df <- as.data.frame.matrix(gem_vor@coords)
 
 gv <- ggmap(get_stamenmap(bbox = c(left = 5, bottom = 43.4, 
                                   right = 18, top = 49.5), zoom = 7, maptype = "toner"))
-gv <- gv + geom_point(aes(x = lng , y = lat), colour = "#e41a1c", data = df, alpha = 0.35)
-gv + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35)
+gv <- gv + geom_point(aes(x = lng , y = lat), colour = "#e41a1c", data = df, alpha = 0.35)+
+  ggtitle("Orte germanischer Belege (morphologischer Typ) mit Basistyp vorrömisch")
+
+gv + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35) +
+  ggtitle("Vergleich von gem_vor mit den lat. Inschriften")
 
 #Heranzoomen des entsprechenden Gebiets
 gv2 <- ggmap(get_stamenmap(bbox = c(left = 6.5, bottom = 45.2, 
                                    right = 17.5, top = 49.3), zoom = 7, maptype = "toner"))
 gv2 <- gv2 + geom_point(aes(x = lng , y = lat), colour = "#e41a1c", data = df, alpha = 0.35)
-gv2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35)
+gv2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35) +
+  ggtitle("Vergleich von gem_vor mit den lat. Inschriften")
+
 
 ##gem_lat
 coords2 <- get_coords(gem_lat$Georeferenz)
 
 gem_lat$lat = coords2$lat
 gem_lat$lng = coords2$lng
+
 coordinates(gem_lat) <- ~ lng + lat
 
 df_gl <- as.data.frame.matrix(gem_lat@coords)
@@ -72,7 +78,8 @@ gl + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alp
 gl2 <- ggmap(get_stamenmap(bbox = c(left = 6.2, bottom = 45.3, 
                                    right = 17.5, top = 49), zoom = 7, maptype = "toner"))
 gl2 <- gl2 + geom_point(aes(x = lng , y = lat), colour = "#ff7f00", data = df_gl, alpha = 0.35)
-gl2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35)
+gl2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35) +
+  ggtitle("Vergleich von gem_lat mit den lat. Inschriften")
 
 ##sla_vor
 coords3 <- get_coords(sla_vor$Georeferenz)
@@ -92,7 +99,8 @@ sv + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alp
 sv2 <- ggmap(get_stamenmap(bbox = c(left = 12.5, bottom = 45.8, 
                                     right = 16, top = 47), zoom = 9, maptype = "toner"))
 sv2 <- sv2 + geom_point(aes(x = lng , y = lat), colour = "#4daf4a", data = df_sv, alpha = 0.6, size = 2)
-sv2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.6, size = 2)
+sv2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.6, size = 2) +
+  ggtitle("Vergeleich von sla_vor mit den lat.Inschriften")
 
 ##sla_lat
 coords4 <- get_coords(sla_lat$Georeferenz)
@@ -115,4 +123,5 @@ sl2 <- ggmap(get_stamenmap(bbox = c(left = 12.6, bottom = 45.4,
                                    right = 16.5, top = 47), zoom = 7, maptype = "toner"))
 sl2 <- sl2 + geom_point(aes(x = lng , y =
                             lat), colour = "#984ea3", data = df_sl, alpha = 0.35)
-sl2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35)
+sl2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35) + 
+  ggtitle("Vergleich von sla_lat mit den lat. Inschriften")
