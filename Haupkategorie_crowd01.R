@@ -43,21 +43,24 @@ mlt$test2[6] <- "Holzv."
 which(mlt$test2 == "Landschaftsformationen")
 mlt$test2[8] <- "Landf."
 
-ggplot(mlt, aes(reorder(x = test2, - value), y = value)) + 
+abs_HaKat <- ggplot(mlt, aes(reorder(x = test2, - value), y = value)) + 
   geom_bar(stat = "identity", fill = "brown1") + 
   geom_text(aes(label = value), vjust = 0) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "") + 
   ggtitle("Anzahl der Einträge je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
+ggsave("abs.Hauptkategorie.png", plot = abs_HaKat, width = 16, height = 10, units = "cm")
 
+#Barplot mit den rel. Haeufigkeiten
 mlt$relativ <- mlt$value/sum(mlt$value)
 mlt$relativ <- round(mlt$relativ, digits = 2)
 
-ggplot(mlt, aes(reorder(x = test2, - mlt$relativ), y = mlt$relativ)) + 
+rel.HaKat <- ggplot(mlt, aes(reorder(x = test2, - mlt$relativ), y = mlt$relativ)) + 
   geom_bar(stat = "identity", fill = "brown1") + 
   geom_text(aes(label = mlt$relativ), vjust = -0.5) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "", y = "rel. Häufigkeit") + 
   ggtitle("Anteil der Einträge je Hauptkategorie") + theme(plot.title = element_text(hjust = 0.5))
 
+ggsave("rel.Hauptkategorie.png", plot = rel.HaKat, width = 16, height = 13, units = "cm")
 #"Milchv." = Milchverarbeitung
 #"Holzv." = "Holzverarbeitung" 
 #"Landf." = Landschaftsformationen

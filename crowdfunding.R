@@ -44,6 +44,7 @@ top20kats <- as.numeric(top20kats)
 top20 <- crowdtyp[crowdtyp$Id_kategorie %in% top20kats,]
 hist(top20$Id_kategorie, breaks = 20)
 
+
 # okay lets take a look at the crowdsourcing data. 
 # columns erfasst am and Id_Informant contain valuable data. 
 require(magrittr)
@@ -159,9 +160,12 @@ plt_publicity <- function(df, days, year, size = 2) {
   plt
 }
 
-plt_publicity(df2017, pubdays2017, "2017", size = 1.4)
-plt_publicity(df2018, pubdays2018, "2018", size = 1.4)
-plt_publicity(df2019, pubdays2019, "2019", size = 1.4)
+plot_2017 <- plt_publicity(df2017, pubdays2017, "2017", size = 1.4)
+ggsave("Publicity_2017.png", plot = plot_2017, width = 18, height = 12, units = "cm")
+plot_2018 <- plt_publicity(df2018, pubdays2018, "2018", size = 1.4)
+ggsave("Publicity_2018.png", plot = plot_2018, width = 18, height = 12, units = "cm")
+plot_2019 <- plt_publicity(df2019, pubdays2019, "2019", size = 1.4)
+ggsave("Publicity_2019.png", plot = plot_2019, width = 18, height = 12, units = "cm")
 
 
 plot2017 <- ggplot(df2017, aes(x = days, y = freq)) +
@@ -185,6 +189,7 @@ stats::acf(df$freq, lag.max = 20, type = "correlation")
 informanten <- unique(crowd$Id_Informant)
 length(informanten)
 nrow(crowd)/length(informanten)
+
 
 require(tidyverse)
 idtable_orig <- crowd %>% select(Id_Informant) %>% group_by(Id_Informant) %>% table()
@@ -215,6 +220,7 @@ df$Kumuliert <- cumsum(df$Anteil)
 plot(df$Einträge~df$Kumuliert)
 plot(df$Kumuliert~df$Einträge)
 df$Anti <- 1 - df$Kumuliert
+
 plot(df$Anti~df$Einträge)
 df$id <- 1:95
 plot(df$Kumuliert ~ df$id)
