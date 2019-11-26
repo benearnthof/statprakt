@@ -111,7 +111,7 @@ sv2 <- ggmap(get_stamenmap(bbox = c(left = 12.5, bottom = 45.8,
                                     right = 16, top = 47), zoom = 9, maptype = "toner"))
 sv2 <- sv2 + geom_point(aes(x = lng , y = lat), colour = "#4daf4a", data = df_sv, alpha = 0.6, size = 2)
 sv2 <- sv2 + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.6, size = 2) +
-  ggtitle("Vergeleich von sla_vor mit den lat.Inschriften")
+  ggtitle("Vergleich von sla_vor mit den lat.Inschriften")
 
 ggsave("sla_vor_insch.png", plot = sv2, width = 16, height = 10, units = "cm")
 

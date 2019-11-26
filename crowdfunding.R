@@ -197,6 +197,7 @@ plot(idtable_orig)
 # rename the dimnames to 1:1043
 idtable <- sort(idtable_orig, decreasing = TRUE)
 dimnames(idtable) <- list(as.character(c(1:length(dimnames(idtable)[[1]]))))
+
 plot(idtable)
 
 plot(ecdf(idtable))
@@ -378,8 +379,10 @@ names(uniquepoints) <- c("ID", "lng", "lat", "count")
 
 saveRDS(uniquepoints, file = "uniquepoints.RDS")
 plt3 <- plt2 +
-  geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "orange")
+  geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "orange") + ggtitle("Heatmap der Crowdsourcing-Belege")
 plt3
+
+ggsave("Heatmap_Crowdsourcing_Poweruser.png", plot = plt3, width = 16, height = 12, units = "cm")
 
 # kategorie maps hinzufügen 
 # 
