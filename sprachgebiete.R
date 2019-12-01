@@ -28,14 +28,35 @@ for (i in 1:length(li)) {
   tmp <- str_split(li[[i]], ",")
   coords <- unlist(tmp)
   tmp <- str_split(coords, " ")
-  lat <- sapply(tmp, `[[`, 1)
-  lng <- sapply(tmp, `[[`, 2)
+  lat <- sapply(tmp, `[[`, 2)
+  lng <- sapply(tmp, `[[`, 1)
   points <- data.frame(lat = as.numeric(lat), lng = as.numeric(lng))
   points <- na.omit(points)
   coordinates(points) <- ~ lng + lat
   crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
   lst[[i]] <- points
 }
+
+map <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner") 
+df <- as.data.frame.matrix(lst[[1]]@coords)
+canvas <- ggmap(map)
+res <- canvas +
+  geom_polygon(aes(x = lng, y = lat),
+             data = df, color = "red", fill = "red")
+res
+
+ggplot(data = df) +
+  geom_polygon(aes(x = lng, y = lat), color = "red", fill = "red")
+
+MAT <- df
+# distance matrix (3.8GB)
+DIST <- dist(MAT)
+library(vegan)
+fit <- monoMDS(DIST, k=2)
+
+
+
+
 
 
 list <- stringr::str_split(bsp, ",")
