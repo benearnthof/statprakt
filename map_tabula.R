@@ -188,3 +188,7 @@ plt_tabulamap(res, round = FALSE)
 buffertable <- bufferzone_counter(distance = 10000)
 res <- augment_tabula(buffertable)
 plt_tabulamap(res)
+
+buffertable <- bufferzone_counter(distance = 1000, centerpoints = gem_vor)
+res <- augment_tabula(buffertable, tab = gem_vor)
+plt_tabulamap(res, round = FALSE)

@@ -10,10 +10,33 @@ sprachgebiete <- read.csv("~/statprakt/sprachgebiete.csv")
 
 library(sf)
 test <- sprachgebiete$Geodaten[1]
-plot(test)
-test <- as.character(test)
+# plot(test)
 
-bsp <- sub("MULTIPOLYGON\\(\\(\\(", "", test)
+test <- as.character(test)
+library(stringr)
+locations <- str_locate_all(test, pattern = "\\([^()]+\\)")[[1]]
+li <- list()
+for (i in 1:nrow(locations)) {
+  li[[i]] <- substr(test, start = locations[i,1], stop = locations[i,2])
+}
+for (i in 1:length(li)) {
+  li[[i]] <- str_remove_all(li[[i]], pattern = c("\\(", "\\)"))
+}
+
+lst <- list()
+for (i in 1:length(li)) {
+  tmp <- str_split(li[[i]], ",")
+  coords <- unlist(tmp)
+  tmp <- str_split(coords, " ")
+  lat <- sapply(tmp, `[[`, 1)
+  lng <- sapply(tmp, `[[`, 2)
+  points <- data.frame(lat = as.numeric(lat), lng = as.numeric(lng))
+  points <- na.omit(points)
+  coordinates(points) <- ~ lng + lat
+  crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+  lst[[i]] <- points
+}
+
 
 list <- stringr::str_split(bsp, ",")
 coords <- unlist(list)
