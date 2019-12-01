@@ -19,6 +19,10 @@ sla_vor <- subset(vorrömisch, morph_Typ_Sprache == "sla")
 gem_lat <- subset(lateinisch, morph_Typ_Sprache == "gem")
 sla_lat <- subset(lateinisch, morph_Typ_Sprache == "sla")
 
+saveRDS(gem_vor, "gem_vor.RDS")
+saveRDS(sla_vor, "sla_vor.RDS")
+saveRDS(gem_lat, "gem_lat.RDS")
+saveRDS(sla_lat, "sla_lat.RDS")
 #Plotte inschriften.csv mit ggmap
 library("ggmap")
 coords_insch <- get_coords(inschriften$Geodaten)

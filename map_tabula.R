@@ -152,6 +152,7 @@ data$Group <- round(data$Freq, digits = -1)
 insch <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 42, 
                                       right = 20, top = 50), zoom = 7, maptype = "toner"))
 insch
+saveRDS(insch, file = "canvas.RDS")
 map <- insch + geom_point(data = data, aes(x = lng, y = lat, size = Group),
                           color = "red", alpha = 0.75) +
   ggtitle("Testtitle") +
@@ -168,10 +169,10 @@ plt_tabulamap <- function(augment_res, canvas = insch, title = "Testtitle", roun
     data$Freq <- round(data$Freq, digits = -1)
   }
   map <- canvas + geom_point(data = data, aes(x = lng, y = lat, size = Freq),
-                             color = "red", alpha = 0.75) + 
+                             color = "red", alpha = 0.15) + 
     ggtitle(title) +
     labs(size = "test") +
-    scale_size(range = c(3, 7))
+    scale_size(range = c(2, 7))
   
   map
 }
@@ -189,6 +190,6 @@ buffertable <- bufferzone_counter(distance = 10000)
 res <- augment_tabula(buffertable)
 plt_tabulamap(res)
 
-buffertable <- bufferzone_counter(distance = 1000, centerpoints = gem_vor)
+buffertable <- bufferzone_counter(distance = 2500, centerpoints = gem_vor)
 res <- augment_tabula(buffertable, tab = gem_vor)
 plt_tabulamap(res, round = FALSE)
