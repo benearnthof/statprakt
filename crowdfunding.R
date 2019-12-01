@@ -175,7 +175,7 @@ for (i in seq_along(pubdays)) {
   plot2017 <- plot2017 + 
     geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.5, size = 2)
 }
-plot2017
+plot_2017
 
 
 x <- df$freq
@@ -452,6 +452,11 @@ get_topxmap <- function(top = 1, dta = top10, mp = map) {
 
 top1map <- get_topxmap(1)
 ggsave("top1map.png", plot = top1map, width = 16, height = 10, units = "cm")
+
+for (i in 1:10) {
+  tmp <- get_topxmap(i)
+  ggsave(paste0("top", i, "map.png"), plot = tmp, width = 16, height = 10, units = "cm")
+}
 
 # fix sprachgebiete map
 # fix graphics in general
