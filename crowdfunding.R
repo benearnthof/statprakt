@@ -410,6 +410,8 @@ rosenheim <- df2018[df2018$days >= "2018-06-19" & df2018$days < "2018-06-24",]
 pubresults <- numeric(length = 43L)
 for (i in seq_along(pubdays)) {
   pubresults[i] <- df$freq[df$days == sort(pubdays)[i]]
+  # include day after publicity 
+  pubresults[i] <- df$freq[df$days == (sort(pubdays)[i] + 1)]
 }
 
 dfpubresults <- data.frame(pubresults = pubresults, dates = sort(pubdays))
@@ -420,6 +422,9 @@ top10$title <- c("Artikel auf rosenheim24.de", "Beitrag auf ddolomiti.eu", "Beit
                  "Vortrag in Sils-Maria", "Artikel auf zalp.ch", "Artikel in Der Bote", 
                  "Interview ORF", "Interview BR", "Facebook: Französischer Spitzenreiter",
                  "Facebook: Beste Gemeinde")
+top10$title <- c("Dialekt Themenwoche im BR", "Artikel auf rosenheim 24.de", "Beitrag auf Facebookseite Servizio Minoranze", 
+                 "Artikel auf zalp.ch", "Artikel auf lmu.de", "Bericht auf brennerbasisdemokratie.eu", 
+                 "Interview BR", "Interview ORF", "Beitrag auf ddolomiti.eu", "Facebook Promovideo")
 # lets get the coordinates of the entries on the top 10 days to plot them on maps
 head(crowd)
 tmp <- str_split(crowd$Erfasst_Am, pattern = " ")
