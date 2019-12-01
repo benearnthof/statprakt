@@ -37,22 +37,34 @@ for (i in 1:length(li)) {
   lst[[i]] <- points
 }
 
+box <- sp_crowd@bbox
+box[2,] <- c(44, 49)
+box[,1] <- c(4.5, 43.3)
+box[,2] <- c(16.5, 48.5)
+coordinates(lst[[1]])
 map <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner") 
 df <- as.data.frame.matrix(lst[[1]]@coords)
+df <- distinct(df)
 canvas <- ggmap(map)
 res <- canvas +
   geom_polygon(aes(x = lng, y = lat),
              data = df, color = "red", fill = "red")
 res
+df <- as.data.frame.matrix(lst[[2]]@coords)
+df <- distinct(df)
+res <- res +
+  geom_polygon(aes(x = lng, y = lat),
+               data = df, color = "green", fill = "green",  inherit.aes = FALSE)
+res
 
 ggplot(data = df) +
   geom_polygon(aes(x = lng, y = lat), color = "red", fill = "red")
-
-MAT <- df
-# distance matrix (3.8GB)
-DIST <- dist(MAT)
-library(vegan)
-fit <- monoMDS(DIST, k=2)
+# 
+# MAT <- df
+# # distance matrix (3.8GB)
+# DIST <- dist(MAT)
+# library(vegan)
+# fit <- monoMDS(DIST, k=2)
 
 
 
