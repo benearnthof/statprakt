@@ -1,3 +1,5 @@
+inschriften <- read.csv("~/statprakt/inschriften.csv", encoding = "UTF-8")
+
 table(nicht_rom$morph_Typ_Sprache)
 #gem  sla 
 #8971 1305 
@@ -24,6 +26,10 @@ coords_insch <- get_coords(inschriften$Geodaten)
 inschriften$lat = coords_insch$lat
 inschriften$lng = coords_insch$lng
 coordinates(inschriften) <- ~ lng + lat
+
+distinct_inschriften <- dplyr::distinct(as.data.frame.matrix(inschriften@coords))
+saveRDS(distinct_inschriften, file = "distinct_inschriften.RDS")
+
 
 df_insch <- as.data.frame.matrix(inschriften@coords)
 
