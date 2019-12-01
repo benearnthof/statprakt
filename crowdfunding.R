@@ -452,3 +452,7 @@ get_topxmap <- function(top = 1, dta = top10, mp = map) {
 
 top1map <- get_topxmap(1)
 ggsave("top1map.png", plot = top1map, width = 16, height = 10, units = "cm")
+
+# fix sprachgebiete map
+# fix graphics in general
+# fix jahres grafiken für publicity aktionen & einträge => achsenbeschriftung, farbgebung etc
