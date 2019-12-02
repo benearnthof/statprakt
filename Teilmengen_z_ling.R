@@ -1,7 +1,11 @@
 ##Teilmengen bilden (romanisch, rom_lat, rom_vor)
 rom <- subset(z_ling, Type_Lang == "roa")
+
 rom_lat <- subset(rom, Base_Type_Lang == "lat" )
+rom_lat_alp <- subset(rom_lat, Alpine_Convention == 1) # Beobachtungen im Alpenraum
+
 rom_vor <- subset(rom, Base_Type_Lang == "vor")
+rom_vor_alp <- subset(rom_vor, Alpine_Convention == 1) # Beobachtungen im Alpenraum
 
 # Belege, wo die Zuordnung der Basistypen unsicher sind
 rom_lat_unsure <- subset(rom_lat, Base_Type_Unsure == 1)
@@ -21,9 +25,12 @@ table(rom$Base_Type_Lang)
 
 ##Teilmengen bilden (germanisch, ger_lat, ger_vor)
 ger <- subset(z_ling, Type_Lang == "gem")
+
 ger_lat <- subset(ger, Base_Type_Lang == "lat")
 ger_vor <- subset(ger, Base_Type_Lang == "vor")
+
 ger_lat_vor <- subset(ger, c(Base_Type_Lang == "lat", Base_Type_Lang == "vor"))
+ger_lat_vor_alp <- subset(ger_lat_vor, Alpine_Convention == 1)
 
 # Belege, wo die Zuordnung der Basistypen unsicher sind
 ger_lat_unsure <- subset(ger_lat, Base_Type_Unsure == 1)
@@ -43,9 +50,12 @@ table(ger$Base_Type_Lang)
 
 ## Teilmengenbilden (slawisch, slaw_lat, slaw_vor)
 slaw <- subset(z_ling, Type_Lang == "sla")
+
 slaw_lat <- subset(slaw, Base_Type_Lang == "lat")
 slaw_vor <- subset(slaw, Base_Type_Lang == "vor")
+
 slaw_vor_lat <- subset(slaw, c(Base_Type_Lang == "lat", Base_Type_Lang == "vor"))
+slaw_vor_lat_alp <- subset(slaw_vor_lat, Alpine_Convention == 1)
 
 # Belege, wo die Zuordnung der Basistypen unsicher sind
 slaw_lat_unsure <- subset(slaw_lat, Base_Type_Unsure == 1)
@@ -61,5 +71,11 @@ table(slaw$Base_Type_Lang)
 # vor  xxx 
 # 140    8 
 
+install.packages("GADMTools")
+library("GADMTools")
+library("sp")
+gadm <- readRDS("C:/Users/Julia Hoepler/Documents/statprakt/gadm36_DEU_4_sp.rds")
+plot(gadm)
 
-
+gadm2 <- readRDS("C:/Users/Julia Hoepler/Documents/statprakt/gadm36_DEU_3_sp.rds")
+plot(gadm2)
