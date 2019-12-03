@@ -1,5 +1,9 @@
+#Duplikate der Sprachbelege entfernen
+z_ling2 <- z_ling[!duplicated(z_ling$Id_Instance),]
+
+
 ##Teilmengen bilden (romanisch, rom_lat, rom_vor)
-rom <- subset(z_ling, Type_Lang == "roa")
+rom <- subset(z_ling2, Type_Lang == "roa")
 
 rom_lat <- subset(rom, Base_Type_Lang == "lat" )
 rom_vor <- subset(rom, Base_Type_Lang == "vor")
@@ -23,14 +27,12 @@ rom_vor_alp <- subset(rom_vor_sure, Alpine_Convention == 1) # Beobachtungen im A
 table(rom$Base_Type_Lang)
 
 #  ahd   deu   eng   fas   fra   frk   gal   gem   goh   got   grc   lat   lts 
-#    6    33     2    98     6   115   101  2695    99   204   287 66844    14 
-
-# NULL  roa   sla   vor   xxx 
-# 6553    6     3  3562  1247 
-
+#    6    16     2    37     5   108    73  1503    61    83   170 19733     5 
+# NULL   roa   sla   vor   xxx 
+# 4430     2     2  1508   481 
 
 ##Teilmengen bilden (germanisch, ger_lat, ger_vor)
-ger <- subset(z_ling, Type_Lang == "gem")
+ger <- subset(z_ling2, Type_Lang == "gem")
 
 ger_lat <- subset(ger, Base_Type_Lang == "lat")
 ger_vor <- subset(ger, Base_Type_Lang == "vor")
@@ -48,17 +50,17 @@ ger_vor_unsure <- subset(ger_vor, Base_Type_Unsure == 1)
 table(ger$Base_Type_Lang)
 
 #   ahd   deu   eng   fas   fra   frk   gal   gem   goh   got   grc   lat   lts 
-#  1475    73   306     0    20     0   622 30350  9464  1857   655 18282     0 
-
+#   296    27     6     0    10     0    92  9173  3361   159    47  5289     0 
 #  NULL   roa   sla   vor   xxx 
-# 41995     0   150  7659   615 
+# 31137     0    12  1880    32 
 
 
 ## Teilmengenbilden (slawisch, slaw_lat, slaw_vor)
-slaw <- subset(z_ling, Type_Lang == "sla")
+slaw <- subset(z_ling2, Type_Lang == "sla")
 
 slaw_lat <- subset(slaw, Base_Type_Lang == "lat")
 slaw_vor <- subset(slaw, Base_Type_Lang == "vor")
+
 
 slaw_vor_lat <- subset(slaw, c(Base_Type_Lang == "lat", Base_Type_Lang == "vor"))
 slaw_vor_lat_alp <- subset(slaw_vor_lat, Alpine_Convention == 1)
@@ -72,8 +74,7 @@ slaw_vor_unsure <- subset(slaw_vor, Base_Type_Unsure == 1)
 table(slaw$Base_Type_Lang)
 
 # ahd  deu  eng  fas  fra  frk  gal  gem  goh  got  grc  lat  lts NULL  roa  sla 
-#  11   58    4    0    0    1    0 1079  471    0    0 2219    0  837    0 3193 
-
+#  11   58    3    0    0    1    0  825  429    0    0 1157    0  764    0 2793 
 # vor  xxx 
-# 140    8 
+# 136    8 
 
