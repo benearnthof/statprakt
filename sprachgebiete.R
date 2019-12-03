@@ -44,7 +44,7 @@ box[2,] <- c(44, 49)
 box[,1] <- c(4.5, 43.3)
 box[,2] <- c(16.5, 48.5)
 coordinates(lst[[1]])
-map <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner") 
+map <- get_stamenmap(bbox = box, zoom = 6, maptype = "toner-lite") 
 df <- as.data.frame.matrix(lst[[1]]@coords)
 df <- distinct(df)
 canvas <- ggmap(map)
@@ -104,16 +104,22 @@ fiv <- readRDS("listfiv.RDS")
 six <- readRDS("listsix.RDS")
 sev <- readRDS("listsev.RDS")
 
-colors <- c("#e41a1c", "#377eb8", "#ffff33", "#984ea3",
+mappr <- function(can = canvas) {
+  colors <- c("#e41a1c", "#377eb8", "#ffff33", "#984ea3",
             "#4daf4a", "#ff7f00", "#000000")
-
-canvas
-areas <- list(one, two, tre, fou, fiv, six, sev)
-for (i in seq_along(areas)) {
-  
+  areas <- list(one, two, tre, fou, fiv, six, sev)
+  map <- can
+  for (i in seq_along(areas)) {
+    for (j in seq_along(areas[[i]])) {
+      df <- as.data.frame.matrix(areas[[i]][[j]]@coords)
+      df <- distinct(df)
+      map <- map +
+      geom_polygon(aes(x = lng, y = lat),
+                 data = df, color = colors[i], fill = colors[i])
+    }
+  }
+map
 }
-
-
 
 list <- stringr::str_split(bsp, ",")
 coords <- unlist(list)
