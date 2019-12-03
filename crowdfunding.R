@@ -106,7 +106,7 @@ for (i in seq_along(pubdays)) {
 plot_ende
 
 # lets split df into 3 parts 2017, 2018 and 2019
-df2017 <- df[df$days <= "2017-12-31",]
+df2017 <- df[(df$days <= "2017-12-31") & (df$days >= "2017-01-01"),]
 df2018 <- df[(df$days <= "2018-12-31") & (df$days >= "2018-01-01"),]
 df2019 <- df[df$days > "2018-12-31",]
 
@@ -122,7 +122,7 @@ headntail = function(x, ...) {
 lapply(list(df2017, df2018, df2019), headntail, n = 5L)
 # everything seems in order
 # split pubdays into reqired format
-pubdays2017 <- pubdays[pubdays <= "2017-12-31"] 
+pubdays2017 <- pubdays[pubdays <= "2017-12-31" & pubdays >= "2017-01-01"] 
 pubdays2018 <- pubdays[pubdays > "2017-12-31" & pubdays <= "2018-12-31"]
 pubdays2019 <- pubdays[pubdays > "2018-12-31"]
 
@@ -130,7 +130,7 @@ saveRDS(pubdays2017, "pubdays2017.RDS")
 saveRDS(pubdays2018, "pubdays2018.RDS")
 saveRDS(pubdays2019, "pubdays2019.RDS")
 
-plt_publicity <- function(df, days, year, size = 2) {
+plt_publicity <- function(df, days, year, size = 2, dayofinterest = NULL) {
   plt <- ggplot(df, aes(x = days, y = freq)) +
     geom_bar(stat = "identity", col = "black") +
     ylim(0, 600) +
@@ -138,7 +138,8 @@ plt_publicity <- function(df, days, year, size = 2) {
     theme(axis.text = element_text(size = 18, face = "bold"),
           axis.title = element_text(size = 18, face = "bold")) +
     xlab(year) +
-    ylab("Anzahl Einträge in Datenbank")
+    scale_x_date(date_labels = c("31.12", "01.01", "01.04", "01.07", "01.10")) +
+    ylab("Anzahl Beiträge")
   # constructing values for geom_segment
   values <- numeric(length = length(days))
   for (i in seq_along(days)) {
@@ -151,16 +152,23 @@ plt_publicity <- function(df, days, year, size = 2) {
     x = as.Date(days),
     xend = as.Date(days), 
     y = values,
-    yend = rep(600, times = length(days))
+    yend = rep(600, times = length(days)),
+    z = rep(0, times = length(days))
   )
+  if (!is.null(dayofinterest)) {
+  segment_data$z[segment_data$x == as.Date(dayofinterest)] <- 1
+  }
   # adding the segments to the plot
   plt <- plt + geom_segment(data = segment_data, 
-                            aes(x = x, y = y, xend = xend, yend = yend), 
-                            col = "#ff8000", alpha = 0.75, size = size)
+                            aes(x = x, y = y, xend = xend, yend = yend, color = z), 
+                            alpha = 0.75, size = size) +
+    scale_color_gradientn(colours=c("#ff5500","#0050ff")) + 
+    theme(legend.position = "none")
   plt
 }
 
-plot_2017 <- plt_publicity(df2017, pubdays2017, "2017", size = 1.4)
+plot_2017 <- plt_publicity(df2017, pubdays2017, "2017", size = 1.4, "2017-03-14")
+plot_2017
 ggsave("Publicity_2017.png", plot = plot_2017, width = 18, height = 12, units = "cm")
 plot_2018 <- plt_publicity(df2018, pubdays2018, "2018", size = 1.4)
 ggsave("Publicity_2018.png", plot = plot_2018, width = 18, height = 12, units = "cm")
