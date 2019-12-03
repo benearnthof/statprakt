@@ -138,7 +138,7 @@ plt_publicity <- function(df, days, year, size = 2, dayofinterest = NULL) {
     theme(axis.text = element_text(size = 18, face = "bold"),
           axis.title = element_text(size = 18, face = "bold")) +
     xlab(year) +
-    scale_x_date(date_labels = c("31.12", "01.01", "01.04", "01.07", "01.10")) +
+    scale_x_date(date_labels = c("31.12.", "01.01.", "01.04.", "01.07.", "01.10.")) +
     ylab("Anzahl Beiträge")
   # constructing values for geom_segment
   values <- numeric(length = length(days))
@@ -159,31 +159,31 @@ plt_publicity <- function(df, days, year, size = 2, dayofinterest = NULL) {
   segment_data$z[segment_data$x == as.Date(dayofinterest)] <- 1
   }
   # adding the segments to the plot
-  plt <- plt + geom_segment(data = segment_data, 
+  if(!is.null(dayofinterest)) {
+    plt <- plt + geom_segment(data = segment_data, 
                             aes(x = x, y = y, xend = xend, yend = yend, color = z), 
-                            alpha = 0.75, size = size) +
+                            alpha = 0.75, size = size) + 
     scale_color_gradientn(colours=c("#ff5500","#0050ff")) + 
     theme(legend.position = "none")
+  } else {
+    plt <- plt + geom_segment(data = segment_data,
+                              aes(x = x, y = y, xend = xend, yend = yend),
+                              alpha = 0.75, size = size, color = "#ff5500") +
+      theme(legend.position = "none")
+  }
   plt
 }
 
-plot_2017 <- plt_publicity(df2017, pubdays2017, "2017", size = 1.4, "2017-03-14")
+plot_2017 <- plt_publicity(df2017, pubdays2017, "2017", size = 1.4)
 plot_2017
 ggsave("Publicity_2017.png", plot = plot_2017, width = 18, height = 12, units = "cm")
 plot_2018 <- plt_publicity(df2018, pubdays2018, "2018", size = 1.4)
+plot_2018
 ggsave("Publicity_2018.png", plot = plot_2018, width = 18, height = 12, units = "cm")
 plot_2019 <- plt_publicity(df2019, pubdays2019, "2019", size = 1.4)
+plot_2019
 ggsave("Publicity_2019.png", plot = plot_2019, width = 18, height = 12, units = "cm")
 
-
-plot2017 <- ggplot(df2017, aes(x = days, y = freq)) +
-  geom_bar(stat = "identity") + 
-  theme_bw()
-for (i in seq_along(pubdays)) {
-  plot2017 <- plot2017 + 
-    geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.5, size = 2)
-}
-plot_2017
 
 
 x <- df$freq
@@ -252,22 +252,35 @@ abline(v = 0.95, col = "red")
 # benutze wot um ggplot für lorenzkurve zu erstellen
 plot(wot$L~wot$p)
 lorenz <- data.frame(x = wot$p, y = wot$L)
+# lorenzkurve ====
 ggplot(data = lorenz) +
-  geom_line(aes(x = x, y = y), color = "red", size = 1.5) + 
-  geom_line(aes(x = x, y = x), size = 1.1) + 
-  scale_x_continuous(breaks = c(0, 0.25, 0.5, 0.75, 0.95, 1)) +
-  scale_y_continuous(breaks = c(0, 0.25,round(1 - df$Kumuliert[53], digits = 2),
-                                0.5, 0.75, 1)) +
+  geom_line(aes(y = x, x = y), color = "red", size = 1.5) + 
+  # geom_line(aes(x = x, y = x), size = 1.1) + 
+  scale_x_continuous(breaks = c(0, 0.05, 0.25, 0.5, 0.75, 1)) +
+  scale_y_continuous(breaks = c(0, 0.25, 0.5, round(1 - df$Kumuliert[53], digits = 2), 
+                                0.75, 1)) +
   ylab("Relativer Anteil Beiträge") +
   xlab("Relativer Anteil Crowd") + 
   theme_bw() +
   theme(axis.text=element_text(size=10, face = "bold"),
         axis.title=element_text(size=14,face="bold")) +
-  geom_hline(yintercept =  round(1- df$Kumuliert[53], digits = 2),
+  geom_hline(yintercept =  round(df$Kumuliert[53], digits = 2),
              color = "blue", size = 1.2) +
-  geom_vline(xintercept = 0.95, color = "blue", size = 1.2) +
-  ggtitle("Lorenzkurve Crowdsourcing")
+  geom_vline(xintercept = 0.05, color = "blue", size = 1.2) +
+  ggtitle("Empirische Verteilungsfunktion Crowdsourcing")
 
+ggplot(data = df, aes(x = Kumuliert, y = Personenkumuliert)) +
+  geom_step(size = 1.5) +
+  scale_x_continuous(limits = c(0, 1), breaks = c(0, 0.25, 0.5, round(df$Kumuliert[53], digits = 2), 
+                                       0.75, 1)) +
+  scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.25, 0.5, 0.75, 0.95, 1)) +
+  theme_bw() +
+  geom_hline(yintercept = 0.95) +
+  geom_vline(xintercept = df$Kumuliert[53]) +
+  ggtitle("Empirische Verteilungsfunktion: Crowdsourcing") +
+  ylab("Kumulierte relative Anteile: Personen") +
+  xlab("Kumulierte relative Anteile: Einträge")
+  
 
 # Hauptkategorieplot
 require(reshape2)
@@ -633,6 +646,13 @@ for (i in 1:43) {
   ggsave(paste0("top", i, "map.png"), plot = tmp2, width = 16, height = 10, units = "cm")
 }
 
-# fix sprachgebiete map
-# fix graphics in general
-# fix jahres grafiken für publicity aktionen & einträge => achsenbeschriftung, farbgebung etc
+# fix sprachgebiete map => done
+# fix graphics in general => in progress
+# fix jahres grafiken für publicity aktionen => done
+# add gestapelte balkendiagramme für Kategorien der verschiedenen "Powergruppen" 
+
+idtable_orig <- crowd %>% select(Id_Informant) %>% group_by(Id_Informant) %>% table()
+plot(idtable_orig)
+
+df <- as.data.frame(sort(idtable_orig, decreasing = TRUE))
+names(df) <- c("id", "freq")
