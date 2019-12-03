@@ -44,7 +44,7 @@ i <-insch + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_ins
 
 # Map: Tabula und Inschriften 
 i_tabula <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 42, 
-                                         right = 20, top = 50), zoom = 7, maptype = "toner"))
+                                         right = 20, top = 50), zoom = 6, maptype = "toner-lite"))
 i_tabula <- i_tabula + geom_point(aes(x = lng , y = lat, colour = "Inschriften"), data = df_insch, alpha = 0.35)   
 i_tabula <- i_tabula + geom_point(aes(x = lng , y = lat, colour = "Tabula"), data = coords_tabula, alpha = 1, size = 2) +
             scale_colour_manual(name="Legende",
@@ -58,7 +58,7 @@ ggsave("Inschriften_Tabula_Map.png", plot =i_tabula, width = 16, height = 10, un
 
 #Heranzoomen Map: Tabula & Inschriften
 insch2 <- ggmap(get_stamenmap(bbox = c(left = 7.5, bottom = 43, 
-                                       right = 20, top = 49), zoom = 7, maptype = "toner"))
+                                       right = 20, top = 49), zoom = 6, maptype = "toner-lite"))
 insch2 <- insch2 + geom_point(aes(x = lng , y = lat, colour = "Inschriften"), data = df_insch, alpha = 0.35)
 insch2 <- insch2 + geom_point(aes(x = lng , y = lat, colour = "Tabula"), data = coords_tabula, alpha = 1, size = 2) +
           scale_colour_manual(name="Legende",
