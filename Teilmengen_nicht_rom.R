@@ -158,6 +158,11 @@ sl <- sl + geom_point(aes(x = lng , y = lat, colour = "Inschriften"), data = df_
 
 ggsave("sla_lat.png", plot = sl, width = 16, height = 10, units = "cm")
 
+#ids von den Ausreißern
+ausreisser <- subset(sla_lat, Breite < 45.5)
+as.data.frame(ausreisser)
+#ID_morph_typ = 6700, ID-basistyp = 842
+
 #Heranzoomen des entsprechenden Gebiets
 sl2 <- ggmap(get_stamenmap(bbox = c(left = 12.8, bottom = 45.7, 
                                    right = 15.7, top = 47), zoom = 8, maptype = "toner"))
