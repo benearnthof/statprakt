@@ -307,13 +307,13 @@ points(df$lng, df$lat, col = "red", cex = log(df$Freq) + 1)
 saveRDS(sp_crowd, file = "sp_crowd.RDS")
 box <- sp_crowd@bbox
 box[2,] <- c(45, 50.5)
-map <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner") 
+map <- get_stamenmap(bbox = box, zoom = 6, maptype = "toner-lite") 
 plt <- ggmap(map) +
   geom_point(aes(x = lng, y = lat, size = sqrt(Freq), col = sqrt(Freq)),
              data = df, alpha = .5)
-plt2 <- ggmap(map) +
-  stat_density2d(aes(x = lng, y = lat, fill=..level..), alpha = 0.15, bins = 25, data = df, geom = "polygon") +
-    scale_fill_gradient(low = "#377eb8", high = "#e41a1c")
+obj <- as.data.frame.matrix(sp_crowd@coords)
+plt2 <- ggmap(map) + 
+  stat_bin2d(mapping = aes(x = lng, y = lat), data = obj, bins = 30)
 plt2
 
 # todo: plot sprachraum
@@ -469,7 +469,7 @@ for (i in 1:10) {
 }
 
 
-#plot für alle Aktionen
+#plot für alle Aktionen über 2 Tage
 aktionen <- dfpubresults[order(dfpubresults$pubresults, decreasing = TRUE),][1:43,]
 aktionen$title <- c("Dialekt Themenwoche im BR (27.04.2018)", "Artikel auf rosenheim 24.de (19.06.2018)", "Beitrag auf Web- und Facebookseite Servizio Minoranze (09.08.2019)", 
                     "Artikel auf zalp.ch (27.03.2017)", "Artikel auf lmu.de (15.05.2017)", "Bericht auf brennerbasisdemokratie.eu (30.07.2019)", 
@@ -516,6 +516,59 @@ for (i in 1:43) {
 }
 ## Fehler bei der Anzeige der Anzahl der Einträge! siehe Kommentar oben
 
+# alle Aktionen über 3 Tage
+pubresults <- numeric(length = 43L)
+for (i in seq_along(pubdays)) {
+  pubresults[i] <- df$freq[df$days == (sort(pubdays)[i] + 3)]
+}
+
+dfpubresults <- data.frame(pubresults = pubresults, dates = sort(pubdays))
+dfpubresults$aktion <- publicity$Bericht[2:length(publicity$Bericht)]
+
+aktionen <- dfpubresults[order(dfpubresults$pubresults, decreasing = TRUE),][1:43,]
+aktionen$title <- c("Dialekt Themenwoche im BR (27.04.2018)", "Artikel auf rosenheim 24.de (19.06.2018)", "Beitrag auf Web- und Facebookseite Servizio Minoranze (09.08.2019)", 
+                    "Artikel auf zalp.ch (27.03.2017)", "Artikel auf lmu.de (15.05.2017)", "Bericht auf brennerbasisdemokratie.eu (30.07.2019)", 
+                    "Interview BR (11.04.2017)", "Interview ORF (20.05.2017)", "Beitrag auf ddolomiti.eu (08.08.2019)", "Facebook Promovideo (14.03.2017)", " Beitrag in der Facebook-Gruppe 'Solo alpeggio' (05.12.2017)", "Beitrag auf Facebook 'beste Gemeinde' (16.05.2017)", "Facebook: 3000 Belege (30.03.2017)", "Artikeln in 'der Bote' (23.05.2017)", "Facebook: 4000 Belege (13.05.2017)", "offizieller Start Crowdsourcing (Facebook-Post) (10.02.2017)", "Artikel im 'il Gazzettino di Belluno' (04.08.2019)", "www.milchhandwerk.info (04.04.2017)", "Facebook: neuer Flyer (20.04.2017)", "Flyer-Verteilung in Colle S. Lucia (24.08.2019)", "VerbaAlpina Champion 2/17 (28.02.2017)", "Vortrag Bayerischer Almbauerntag (07.10.2017)", "Post auf Reddit.com/austria (20.06.2018)", "Artikel auf bergwelten.com (17.03.2017)", 
+                    "VerbaAlpina Champion 3/17 (01.04.2017)", "Bayern2 'Tagesgespräch' (21.02.2019)", "VerbaAlpina Champion 4/17 (01.05.2017)", "Post auf Reddit.com/france und Reddit.com/schweiz (02.07.2018)", "Vorschau auf lausc.it (23.07.2019)", "Artikel in der La Usc di Ladins (26.07.2019)", "Beitrag in der Facebook-Gruppe 'Allevatori italiani' (04.12.2017)", " Vortrag beim Almlehrkurs in Bad Feilnbach (16.02.2018)", " Interview Radio Regenbogen (10.06.2018)", " Facebook: Weihnachtsgruß (19.12.2016)", "Facebook: französischer Spitzenreiter (29.06.2017)", "Vortrag in Sils-Maria (27.12.2017)", "Artikel in 'Anzeiger von Saanen' (23.02.2018)", 
+                    "Artikel Zeitschrift Tegernseer Tal (25.09.2018)", "Artikel auf tourentipp.de (23.10.2018)", " Artikel im Corriere delle Alpi (24.07.2019)", " Flyer-Verteilung im Rosengarten/Catinaccio (02.08.2019)", "Artikel im L'Adige - Quotidiano indipendente del Trentino Alto Adige (23.08.2019)", " Flyer-Verteilung bei Poetry Slam St. Ulrich in Gröden (31.08.2019)")
+
+#lets get the coordinates of the entries of all days to plot them on maps
+tmp2 <- str_split(crowd$Erfasst_Am, pattern = " ")
+tmp2 <- sapply(tmp2, `[[`, 1)
+crowd$day2 <- tmp2
+crowd$day2 <- as.Date(crowd$day2)
+aktionen$dates <- as.Date(aktionen$dates)
+final2 <- crowd[crowd$day2 %in% aktionen$dates,]
+all.equal(nrow(final2), sum(aktionen$pubresults))
+
+aktionenmap <- ggmap(map) +
+  geom_count(aes(x = lng, y = lat), color = "red", alpha = 0.5, data = final2)
+
+aktionenmap
+
+# crowd has to have lon & lat columns
+# unten beschriebener Fehler müsste hier liegen
+get_topxmap_aktionen <- function(top = 1, dta = aktionen, mp = map) {
+  topx_aktionen <- dta[top,] 
+  tmp2 <- str_split(crowd$Erfasst_Am, pattern = " ")
+  tmp2 <- sapply(tmp2, `[[`, 1)
+  crowd$day2 <- tmp2
+  crowd$day2 <- as.Date(crowd$day2)
+  topx_aktionen$dates <- as.Date(topx_aktionen$dates)
+  final2 <- crowd[crowd$day2 %in% topx_aktionen$dates,]
+  topxmap_aktionen <- ggmap(mp) +
+    geom_count(aes(x = lng, y = lat), color = "red", alpha = 0.5, data = final2) +
+    ggtitle(topx_aktionen$title)
+  topxmap_aktionen
+}
+
+top1map_aktionen <- get_topxmap_aktionen(1)
+ggsave("top1map_aktionen.png", plot = top1map_aktionen, width = 16, height = 10, units = "cm")
+
+for (i in 1:43) {
+  tmp2 <- get_topxmap_aktionen(i)
+  ggsave(paste0("top", i, "map.png"), plot = tmp2, width = 16, height = 10, units = "cm")
+}
 
 # fix sprachgebiete map
 # fix graphics in general
