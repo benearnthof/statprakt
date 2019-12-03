@@ -4,16 +4,20 @@ rom <- subset(z_ling, Type_Lang == "roa")
 rom_lat <- subset(rom, Base_Type_Lang == "lat" )
 rom_vor <- subset(rom, Base_Type_Lang == "vor")
 
-# 'Alpine_Convention' gibt an, ob sich der Beleg in der Alpenkonvention befindet (1) oder nicht (0)
-# d.h. 
-rom_lat_alp <- subset(rom_lat, Alpine_Convention == 1) # Beobachtungen im Alpenraum
-rom_vor_alp <- subset(rom_vor, Alpine_Convention == 1) # Beobachtungen im Alpenraum
-
 # Belege, wo die Zuordnung der Basistypen unsicher sind
 rom_lat_unsure <- subset(rom_lat, Base_Type_Unsure == 1)
 # 56 Beobachtungen
 rom_vor_unsure <- subset(rom_vor, Base_Type_Unsure == 1)
 # 54 Beobachtungen
+
+#sichere Zuordnung
+rom_lat_sure <- subset(rom_lat, Base_Type_Unsure == 0)
+rom_vor_sure <- subset(rom_vor, Base_Type_Unsure == 0)
+
+# 'Alpine_Convention' gibt an, ob sich der Beleg in der Alpenkonvention befindet (1) oder nicht (0)
+# d.h. 
+rom_lat_alp <- subset(rom_lat_sure, Alpine_Convention == 1) # Beobachtungen im Alpenraum
+rom_vor_alp <- subset(rom_vor_sure, Alpine_Convention == 1) # Beobachtungen im Alpenraum
 
 # Betrachte, welche Basistypen es überhaupt gibt
 table(rom$Base_Type_Lang)

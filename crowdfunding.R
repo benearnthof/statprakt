@@ -369,6 +369,8 @@ plot5 <- plot4 +
   scale_fill_gradient(low ="slateblue", high = "yellow", limits = c(0,600) )
 plot5
 
+
+
 # todo: plot sprachraum
 # welche publicity aktionen haben am meisten gebracht?
 # wann waren poweruser am werk?
