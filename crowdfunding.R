@@ -229,9 +229,36 @@ df$Personenanteil <- df$Häufigkeit / sum(df$Häufigkeit)
 df$Personenkumuliert <- cumsum(df$Personenanteil)
 plot(df$Personenkumuliert ~ df$Kumuliert, ylim = c(0,1))
 abline(h = 0.95, col = "red")
+which(1 - df$Personenkumuliert < 0.01)
+df$Kumuliert[85]
+abline(v = df$Kumuliert[53], col = "red")
+
+install.packages("ineq")
+library(ineq)
+x <- runif(20)
+wot <- Lc(df$Personenanteil, plot = TRUE)
+abline(h = 1 - df$Kumuliert[53], col = "red")
 which(1 - df$Personenkumuliert < 0.05)
 df$Kumuliert[53]
-abline(v = df$Kumuliert[53], col = "red")
+abline(v = 0.95, col = "red")
+# benutze wot um ggplot für lorenzkurve zu erstellen
+plot(wot$L~wot$p)
+lorenz <- data.frame(x = wot$p, y = wot$L)
+ggplot(data = lorenz) +
+  geom_line(aes(x = x, y = y), color = "red", size = 1.5) + 
+  geom_line(aes(x = x, y = x), size = 1.1) + 
+  scale_x_continuous(breaks = c(0, 0.25, 0.5, 0.75, 0.95, 1)) +
+  scale_y_continuous(breaks = c(0, 0.25,round(1 - df$Kumuliert[53], digits = 2),
+                                0.5, 0.75, 1)) +
+  ylab("Relativer Anteil Beiträge") +
+  xlab("Relativer Anteil Crowd") + 
+  theme_bw() +
+  theme(axis.text=element_text(size=10, face = "bold"),
+        axis.title=element_text(size=14,face="bold")) +
+  geom_hline(yintercept =  round(1- df$Kumuliert[53], digits = 2),
+             color = "blue", size = 1.2) +
+  geom_vline(xintercept = 0.95, color = "blue", size = 1.2) +
+  ggtitle("Lorenzkurve Crowdsourcing")
 
 
 # Hauptkategorieplot
