@@ -8,8 +8,10 @@ sprachgebiete <- read.csv("~/statprakt/sprachgebiete.csv")
 # => visualisieren der Einträge => existieren heute in den gleichen Regionen 
 # matching von ids auf gebiete etc => mail an projektpartner
 
+# rom       ger       sla       romger    gersla    romsla    romgersla
+# rot       blau      gelb     lila      gruen      orange      schwarz
 library(sf)
-test <- sprachgebiete$Geodaten[1]
+test <- sprachgebiete$Geodaten[7]
 # plot(test)
 
 test <- as.character(test)
@@ -46,10 +48,10 @@ map <- get_stamenmap(bbox = box, zoom = 7, maptype = "toner")
 df <- as.data.frame.matrix(lst[[1]]@coords)
 df <- distinct(df)
 canvas <- ggmap(map)
-res <- canvas +
+res1 <- canvas +
   geom_polygon(aes(x = lng, y = lat),
              data = df, color = "red", fill = "red")
-res
+res1
 df <- as.data.frame.matrix(lst[[2]]@coords)
 df <- distinct(df)
 res <- res +
@@ -59,15 +61,57 @@ res
 
 ggplot(data = df) +
   geom_polygon(aes(x = lng, y = lat), color = "red", fill = "red")
+# lengths <- numeric(length = 334)
+# for (i in 1:334) {
+#   lengths[i] <- nrow(lst[[i]]@coords)
+# }
+
+# ugh <- list()
+# ugh <- lst[which(lengths > 100)]
+
+# for (i in 12) {
+#   df <- as.data.frame.matrix(ugh[[i]]@coords)
+#   df <- distinct(df)
+#   res <- res1 + 
+#     geom_polygon(aes(x = lng, y = lat), color = "green", fill = "green",
+#                  data = df)
+# }
+# res
 # 
-# MAT <- df
-# # distance matrix (3.8GB)
-# DIST <- dist(MAT)
-# library(vegan)
-# fit <- monoMDS(DIST, k=2)
+# listone <- lst
+# listtwo <- ugh
+# listtre <- lst
+# listfor <- lst 
+# listfiv <- lst
+# listsix <- lst
+# listsev <- lst
+# in speicher lesen via readRDS => preprocessing wurde für alle 7 multipolygone 
+# manuell gemacht, da multipolygon 2 334 eintraege enthielt wurden nur die 14 
+# polygone gespeichert die mehr als 100 vertices haben. 
+# saveRDS(listone, "listone.RDS")
+# saveRDS(listtwo, "listtwo.RDS")
+# saveRDS(listtre, "listtre.RDS")
+# saveRDS(listfor, "listfor.RDS")
+# saveRDS(listfiv, "listfiv.RDS")
+# saveRDS(listsix, "listsix.RDS")
+# saveRDS(listsev, "listsev.RDS")
 
+one <- readRDS("listone.RDS")
+two <- readRDS("listtwo.RDS")
+tre <- readRDS("listtre.RDS")
+fou <- readRDS("listfor.RDS")
+fiv <- readRDS("listfiv.RDS")
+six <- readRDS("listsix.RDS")
+sev <- readRDS("listsev.RDS")
 
+colors <- c("#e41a1c", "#377eb8", "#ffff33", "#984ea3",
+            "#4daf4a", "#ff7f00", "#000000")
 
+canvas
+areas <- list(one, two, tre, fou, fiv, six, sev)
+for (i in seq_along(areas)) {
+  
+}
 
 
 
@@ -113,7 +157,7 @@ romanic <- gen_points(sprachgebiete$Geodaten[1])
 plot(romanic, add = F, pch = 20)
 # nice
 # rom       ger       sla       romger    gersla    romsla    romgersla
-# rot       blau      gruen     lila      orange    gelb      braun
+# rot       blau      gelb     lila      gruen      orange      schwarz
 germanic <- gen_points(sprachgebiete$Geodaten[2])
 plot(germanic, col = "red",add = TRUE, pch = 20)
 slavic <- gen_points(sprachgebiete$Geodaten[3])
