@@ -2,9 +2,11 @@
 rom <- subset(z_ling, Type_Lang == "roa")
 
 rom_lat <- subset(rom, Base_Type_Lang == "lat" )
-rom_lat_alp <- subset(rom_lat, Alpine_Convention == 1) # Beobachtungen im Alpenraum
-
 rom_vor <- subset(rom, Base_Type_Lang == "vor")
+
+# 'Alpine_Convention' gibt an, ob sich der Beleg in der Alpenkonvention befindet (1) oder nicht (0)
+# d.h. 
+rom_lat_alp <- subset(rom_lat, Alpine_Convention == 1) # Beobachtungen im Alpenraum
 rom_vor_alp <- subset(rom_vor, Alpine_Convention == 1) # Beobachtungen im Alpenraum
 
 # Belege, wo die Zuordnung der Basistypen unsicher sind
@@ -71,11 +73,3 @@ table(slaw$Base_Type_Lang)
 # vor  xxx 
 # 140    8 
 
-install.packages("GADMTools")
-library("GADMTools")
-library("sp")
-gadm <- readRDS("C:/Users/Julia Hoepler/Documents/statprakt/gadm36_DEU_4_sp.rds")
-plot(gadm)
-
-gadm2 <- readRDS("C:/Users/Julia Hoepler/Documents/statprakt/gadm36_DEU_3_sp.rds")
-plot(gadm2)

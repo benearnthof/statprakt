@@ -275,8 +275,8 @@ mapview(sp_crowd, zcol = "Hauptkategorie")
 require(ggmap)
 x <- sp_crowd@coords
 minmax <- c(min(x[,1]), max(x[,1]), min(x[,2]), max(x[,2]))
-map <- get_stamenmap(bbox = c(left = 11.6, bottom = 45, 
-                              right = 14.5, top = 47), zoom = 8)
+map <- get_stamenmap(bbox = c(left = 5.5, bottom = 44.8, 
+                              right = 17, top = 47), zoom = 8)
 ggmap(map)
 ggmapplot(map) +
   geom_point(head(x), aes(x = "lng", y = "lat"))
@@ -291,7 +291,8 @@ plot(newmap, xlim = sp_crowd@bbox[1,], ylim = sp_crowd@bbox[2,], asp = 0.75)
 points(sp_crowd@coords[,1], sp_crowd@coords[,2], col = "red", cex = .6)
 abline(v = 6)
 
-# lets count entries per point
+
+## Heatmap mit stat_bin2d
 df <- as.data.frame(table(crowd$Georeferenz))
 df
 coords <- get_coords(df$Var1)
@@ -307,14 +308,39 @@ points(df$lng, df$lat, col = "red", cex = log(df$Freq) + 1)
 saveRDS(sp_crowd, file = "sp_crowd.RDS")
 box <- sp_crowd@bbox
 box[2,] <- c(45, 50.5)
-map <- get_stamenmap(bbox = box, zoom = 6, maptype = "toner-lite") 
+map <- get_stamenmap(bbox = c(left = 4, bottom = 43.4, 
+                              right = 17.1, top = 51), zoom = 6, maptype = "toner-lite") 
 plt <- ggmap(map) +
   geom_point(aes(x = lng, y = lat, size = sqrt(Freq), col = sqrt(Freq)),
              data = df, alpha = .5)
 obj <- as.data.frame.matrix(sp_crowd@coords)
 plt2 <- ggmap(map) + 
-  stat_bin2d(mapping = aes(x = lng, y = lat), data = obj, bins = 30)
+  stat_bin2d(mapping = aes(x = lng, y = lat), data = obj, bins = 30) 
 plt2
+
+library("dplyr")
+romanisch <- readRDS("listone.RDS")
+df_rom <- as.data.frame.matrix(romanisch[[1]]@coords)
+df_rom <- distinct(df_rom)
+plot3 <- plt2 +
+  geom_polygon(data = df_rom, aes( x = lng, y = lat, colour = "Romanisch"), fill = NA) 
+
+germanisch <- readRDS("listtwo.RDS")
+df_ger <- as.data.frame.matrix(germanisch[[1]]@coords)
+df_ger <- distinct(df_ger)
+plot4 <- plot3 +
+  geom_polygon(data = df_ger, aes(x = lng, y = lat, colour = "Germanisch"), fill = NA) +
+  ggtitle("Crowdsourcing: Räumliche Verteilung")
+
+
+slavisch <- readRDS("listtre.RDS")
+df_slav <- as.data.frame.matrix(slavisch[[1]]@coords)
+df_slav <- distinct(df_slav)
+plot5 <- plot4 + 
+  geom_polygon(data = df_slav, aes(x = lng, y = lat, colour = "Slavisch"), fill = NA) +
+  scale_colour_manual(values = c(Germanisch ="blue", Romanisch = "red", Slavisch = "yellow")) +
+  scale_fill_gradientn(limits=c(0,700), breaks=seq(0, 700, by=200), colours = c(low = "midblue", high = "red"))
+plot5
 
 # todo: plot sprachraum
 # welche publicity aktionen haben am meisten gebracht?
