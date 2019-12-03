@@ -350,13 +350,13 @@ romanisch <- readRDS("listone.RDS")
 df_rom <- as.data.frame.matrix(romanisch[[1]]@coords)
 df_rom <- distinct(df_rom)
 plot3 <- plt2 +
-  geom_polygon(data = df_rom, aes( x = lng, y = lat, colour = "Romanisch"), fill = NA) 
+  geom_polygon(data = df_rom, aes( x = lng, y = lat, colour = "Romanisch"), fill = NA, size = 1) 
 
 germanisch <- readRDS("listtwo.RDS")
 df_ger <- as.data.frame.matrix(germanisch[[1]]@coords)
 df_ger <- distinct(df_ger)
 plot4 <- plot3 +
-  geom_polygon(data = df_ger, aes(x = lng, y = lat, colour = "Germanisch"), fill = NA) +
+  geom_polygon(data = df_ger, aes(x = lng, y = lat, colour = "Germanisch"), fill = NA, size =1) +
   ggtitle("Crowdsourcing: Räumliche Verteilung")
 
 
@@ -364,9 +364,9 @@ slavisch <- readRDS("listtre.RDS")
 df_slav <- as.data.frame.matrix(slavisch[[1]]@coords)
 df_slav <- distinct(df_slav)
 plot5 <- plot4 + 
-  geom_polygon(data = df_slav, aes(x = lng, y = lat, colour = "Slavisch"), fill = NA) +
-  scale_colour_manual(values = c(Germanisch ="blue", Romanisch = "red", Slavisch = "yellow")) +
-  scale_fill_gradientn(limits=c(0,700), breaks=seq(0, 700, by=200), colours = c(low = "midblue", high = "red"))
+  geom_polygon(data = df_slav, aes(x = lng, y = lat, colour = "Slavisch"), fill = NA, size = 1) +
+  scale_colour_manual(values = c(Germanisch ="cyan1", Romanisch = "red", Slavisch = "yellow")) +
+  scale_fill_gradient(low ="slateblue", high = "yellow", limits = c(0,600) )
 plot5
 
 # todo: plot sprachraum
