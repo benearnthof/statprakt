@@ -1,8 +1,109 @@
+## Erstellen des gesamten Alpenraums als ein Polygon
+library("dplyr")
+library("raster")
+library("sp")
+library("mapview")
+one <- readRDS("listone.RDS")
+two <- readRDS("listtwo.RDS")
+tre <- readRDS("listtre.RDS")
+fou <- readRDS("listfor.RDS")
+fiv <- readRDS("listfiv.RDS")
+six <- readRDS("listsix.RDS")
+sev <- readRDS("listsev.RDS")
+
+mappr <- function(can = canvas) {
+  colors <- c("#e41a1c", "#377eb8", "#ffff33", "#ff00ff",
+              "#4daf4a", "#ff7f00", "#000000")
+  areas <- list(one, two, tre, fou, fiv, six, sev)
+  map <- can
+  for (i in seq_along(areas)) {
+    for (j in seq_along(areas[[i]])) {
+      df <- as.data.frame.matrix(areas[[i]][[j]]@coords)
+      df <- distinct(df)
+      map <- map +
+        geom_polygon(aes(x = lng, y = lat),
+                     data = df, color = colors[i], fill = colors[i])
+    }
+  }
+  map
+}
+
+test <- mappr()
+ggsave("sprachgebietsmap.png", plot = test, width = 16, height = 9, units = "cm")
+dta <- distinct(as.data.frame.matrix(one[[1]]@coords))
+dta <- as.matrix.data.frame(dta)
+colnames(dta) <- c("x", "y")
+poly <- coords2Polygons(dta, ID = "A")
+plot(poly)
+
+dta <- distinct(as.data.frame.matrix(two[[1]]@coords))
+dta <- as.matrix.data.frame(dta)
+colnames(dta) <- c("x", "y")
+poly2 <- coords2Polygons(dta, ID = "B") 
+plot(poly2)
+
+wot <- rbind(poly, poly2)
+plot(wot)
+library("rgeos")
+agg <- raster::aggregate(wot)
+
+plot(agg)
+
+# wrapping stuff in functions is what i do best
+
+areas <- list(one, two, tre, fou, fiv, six, sev)
+# deriving empty polygon we can use as basis for rbind
+tmp <- poly
+tmp@polygons <- list()
+
+listaggreg8r <- function(areas) {
+  poly <- SpatialPolygons(list())
+  for (i in seq_along(areas)) {
+    for (j in seq_along(areas[[i]])) {
+      df <- as.data.frame.matrix(areas[[i]][[j]]@coords)
+      df <- distinct(df)
+      df <- as.matrix.data.frame(df)
+      colnames(df) <- c("x", "y")
+      tmp <- coords2Polygons(df, ID = paste0(i, j))
+      poly <- rbind(poly, tmp)
+    }
+  }
+  return(poly)
+}
+
+g8r <- listaggreg8r(areas = areas)
+plot(g8r)
+plot(raster::aggregate(g8r))
+
+gates <- raster::aggregate(g8r)
+crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
+
 ## Romanische Sprachfamilie 
 # Basistyp Lateinisch
 #romanisch <- readRDS("listone.RDS")
 #df_rom <- as.data.frame.matrix(romanisch[[1]]@coords)
 #df_rom <- distinct(df_rom)
+
+# Überprüfen ob im Alpenraum
+pnts_rom_lat <- get_coords(rom_lat_alp$Geo_Data)
+
+points_rom_lat <- data.frame(lat = as.numeric(pnts_rom_lat$lat), lng = as.numeric(pnts_rom_lat$lng))
+
+coordinates(points_rom_lat) <- ~ lng + lat
+crs(points_rom_lat) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
+l8r_rom_lat <- sp::over(points_rom_lat, gates)
+
+table(l8r)
+
+l8r_g8r_rom_lat <- points_rom_lat[!is.na(over(points_rom_lat, gates)),]
+nrow(l8r_g8r_rom_lat@coords)
+
+plot(gates)
+plot(l8r_g8r_rom_lat, add = TRUE)
+
+
 
 df_rom_lat <- as.data.frame(table(rom_lat_alp$Geo_Data))
 df_rom_lat <- subset(df_rom_lat, df_rom_lat$Freq!= 0)
@@ -26,6 +127,23 @@ ggsave("Romanisch_Lateinisch.png", plot = plot_rom_lat, width = 16, height = 12,
 #romanisch <- readRDS("listone.RDS")
 #df_rom <- as.data.frame.matrix(romanisch[[1]]@coords)
 #df_rom <- distinct(df_rom)
+#Prüfen, ob im Alpenraum
+pnts_rom_vor <- get_coords(rom_vor_alp$Geo_Data)
+
+points_rom_vor <- data.frame(lat = as.numeric(pnts_rom_vor$lat), lng = as.numeric(pnts_rom_vor$lng))
+
+coordinates(points_rom_vor) <- ~ lng + lat
+crs(points_rom_vor) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
+l8r_rom_vor <- sp::over(points_rom_vor, gates)
+
+table(l8r)
+
+l8r_g8r_rom_vor <- points_rom_vor[!is.na(over(points_rom_vor, gates)),]
+nrow(l8r_g8r_rom_vor@coords)
+
+plot(gates)
+plot(l8r_g8r_rom_vor, add = TRUE)
 
 df_rom_vor <- as.data.frame(table(rom_vor_alp$Geo_Data))
 df_rom_vor <- subset(df_rom_vor, df_rom_vor$Freq != 0)
