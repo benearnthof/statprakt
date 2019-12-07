@@ -213,3 +213,4 @@ plot_slaw <- ggmap(map_slaw) +
 plot_slaw
 
 ggsave("Slavisch_Basistypen.png", plot = plot_slaw, width = 16, height = 12, units = "cm")
+#asdf
