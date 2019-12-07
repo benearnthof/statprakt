@@ -50,7 +50,7 @@ df <- distinct(df)
 canvas <- ggmap(map)
 res1 <- canvas +
   geom_polygon(aes(x = lng, y = lat),
-             data = df, color = "red", fill = "red")
+               data = df, color = "red", fill = "red")
 res1
 df <- as.data.frame.matrix(lst[[2]]@coords)
 df <- distinct(df)
@@ -106,7 +106,7 @@ sev <- readRDS("listsev.RDS")
 
 mappr <- function(can = canvas) {
   colors <- c("#e41a1c", "#377eb8", "#ffff33", "#ff00ff",
-            "#4daf4a", "#ff7f00", "#000000")
+              "#4daf4a", "#ff7f00", "#000000")
   areas <- list(one, two, tre, fou, fiv, six, sev)
   map <- can
   for (i in seq_along(areas)) {
@@ -114,13 +114,72 @@ mappr <- function(can = canvas) {
       df <- as.data.frame.matrix(areas[[i]][[j]]@coords)
       df <- distinct(df)
       map <- map +
-      geom_polygon(aes(x = lng, y = lat),
-                 data = df, color = colors[i], fill = colors[i])
+        geom_polygon(aes(x = lng, y = lat),
+                     data = df, color = colors[i], fill = colors[i])
     }
   }
-map
+  map
 }
 
 test <- mappr()
-test
-ggsave("sprachgebietsmap.png", plot = test, width = 17, height = 9, units = "cm")
+ggsave("sprachgebietsmap.png", plot = test, width = 16, height = 9, units = "cm")
+dta <- distinct(as.data.frame.matrix(one[[1]]@coords))
+dta <- as.matrix.data.frame(dta)
+colnames(dta) <- c("x", "y")
+poly <- coords2Polygons(dta, ID = "A")
+plot(poly)
+
+dta <- distinct(as.data.frame.matrix(two[[1]]@coords))
+dta <- as.matrix.data.frame(dta)
+colnames(dta) <- c("x", "y")
+poly2 <- coords2Polygons(dta, ID = "B") 
+plot(poly2)
+
+wot <- rbind(poly, poly2)
+plot(wot)
+agg <- raster::aggregate(wot)
+plot(agg)
+
+# wrapping stuff in functions is what i do best
+
+areas <- list(one, two, tre, fou, fiv, six, sev)
+# deriving empty polygon we can use as basis for rbind
+tmp <- poly
+tmp@polygons <- list()
+
+listaggreg8r <- function(areas) {
+  poly <- SpatialPolygons(list())
+  for (i in seq_along(areas)) {
+    for (j in seq_along(areas[[i]])) {
+      df <- as.data.frame.matrix(areas[[i]][[j]]@coords)
+      df <- distinct(df)
+      df <- as.matrix.data.frame(df)
+      colnames(df) <- c("x", "y")
+      tmp <- coords2Polygons(df, ID = paste0(i, j))
+      poly <- rbind(poly, tmp)
+    }
+  }
+  return(poly)
+}
+
+g8r <- listaggreg8r(areas = areas)
+plot(g8r)
+plot(raster::aggregate(g8r))
+
+gates <- raster::aggregate(g8r)
+crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+# lets see what points fall into the area at all
+pnts_insch <- get_coords(inschriften$Geodaten)
+
+points <- data.frame(lat = as.numeric(pnts_insch$lat), lng = as.numeric(pnts_insch$lng))
+coordinates(points) <- ~ lng + lat
+crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
+l8r <- sp::over(points, gates)
+table(l8r)
+
+l8r_g8r <- points[!is.na(over(points, gates)),]
+nrow(l8r_g8r@coords)
+
+plot(gates)
+plot(l8r_g8r, add = TRUE)
