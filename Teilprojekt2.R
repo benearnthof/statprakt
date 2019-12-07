@@ -80,10 +80,6 @@ crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
 
 ## Romanische Sprachfamilie 
-# Basistyp Lateinisch
-#romanisch <- readRDS("listone.RDS")
-#df_rom <- as.data.frame.matrix(romanisch[[1]]@coords)
-#df_rom <- distinct(df_rom)
 
 # Überprüfen ob im Alpenraum
 pnts_rom_lat <- get_coords(rom_lat_alp$Geo_Data)
