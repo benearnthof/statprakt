@@ -122,4 +122,5 @@ map
 }
 
 test <- mappr()
-ggsave("sprachgebietsmap.png", plot = test, width = 16, height = 9, units = "cm")
+test
+ggsave("sprachgebietsmap.png", plot = test, width = 17, height = 9, units = "cm")

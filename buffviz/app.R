@@ -17,7 +17,7 @@ ui <- fluidPage(
         ),
 
         mainPanel(
-            plotOutput("map", height = "650px", width = "1000px")
+            plotOutput("map", height = "600px", width = "800px")
           # tableOutput("debug")
         )
     )
