@@ -76,7 +76,9 @@ pubdays[is.na(index)]
 
 # lets generate a vector of days from the start to the end
 start <- as.Date(min(days))
-end <- as.Date(max(days))
+end <- as.Date(max(days)) # end should be the 31st of december to make the plots
+# consistent
+end <- as.Date("2019-12-31")
 df <- data.frame(days = seq(from = start, to = end, by = 1))
 df$freq <- 0
 days <- as.Date(days)
@@ -131,6 +133,7 @@ saveRDS(pubdays2018, "pubdays2018.RDS")
 saveRDS(pubdays2019, "pubdays2019.RDS")
 
 plt_publicity <- function(df, days, year, size = 2, dayofinterest = NULL) {
+  # daysofinterest legt fest welche tage blau eingefärbt werden sollen
   plt <- ggplot(df, aes(x = days, y = freq)) +
     geom_bar(stat = "identity", col = "black") +
     ylim(0, 600) +
@@ -156,7 +159,7 @@ plt_publicity <- function(df, days, year, size = 2, dayofinterest = NULL) {
     z = rep(0, times = length(days))
   )
   if (!is.null(dayofinterest)) {
-  segment_data$z[segment_data$x == as.Date(dayofinterest)] <- 1
+  segment_data$z[segment_data$x %in% as.Date(dayofinterest)] <- 1
   }
   # adding the segments to the plot
   if(!is.null(dayofinterest)) {
@@ -174,13 +177,17 @@ plt_publicity <- function(df, days, year, size = 2, dayofinterest = NULL) {
   plt
 }
 
-plot_2017 <- plt_publicity(df2017, pubdays2017, "2017", size = 1.4)
+# daysofinterest sind hier die 3 tage der top 3 publicity aktionen
+plot_2017 <- plt_publicity(df2017, pubdays2017, "2017", size = 1.4,
+                           dayofinterest = NULL)
 plot_2017
 ggsave("Publicity_2017.png", plot = plot_2017, width = 18, height = 12, units = "cm")
-plot_2018 <- plt_publicity(df2018, pubdays2018, "2018", size = 1.4)
+plot_2018 <- plt_publicity(df2018, pubdays2018, "2018", size = 1.4,
+                           dayofinterest = c("2018-04-27", "2018-06-19"))
 plot_2018
 ggsave("Publicity_2018.png", plot = plot_2018, width = 18, height = 12, units = "cm")
-plot_2019 <- plt_publicity(df2019, pubdays2019, "2019", size = 1.4)
+plot_2019 <- plt_publicity(df2019, pubdays2019, "2019", size = 1.4,
+                           dayofinterest = c("2019-08-08"))
 plot_2019
 ggsave("Publicity_2019.png", plot = plot_2019, width = 18, height = 12, units = "cm")
 
@@ -242,7 +249,7 @@ df$Kumuliert[85]
 abline(v = df$Kumuliert[53], col = "red")
 
 install.packages("ineq")
-library(ineq)
+# library(ineq)
 x <- runif(20)
 wot <- Lc(df$Personenanteil, plot = TRUE)
 abline(h = 1 - df$Kumuliert[53], col = "red")
@@ -269,18 +276,19 @@ ggplot(data = lorenz) +
   geom_vline(xintercept = 0.05, color = "blue", size = 1.2) +
   ggtitle("Empirische Verteilungsfunktion Crowdsourcing")
 
-ggplot(data = df, aes(x = Kumuliert, y = Personenkumuliert)) +
+empi <- ggplot(data = df, aes(x = Kumuliert, y = Personenkumuliert)) +
   geom_step(size = 1.5) +
   scale_x_continuous(limits = c(0, 1), breaks = c(0, 0.25, 0.5, round(df$Kumuliert[53], digits = 2), 
                                        0.75, 1)) +
   scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.25, 0.5, 0.75, 0.95, 1)) +
   theme_bw() +
-  geom_hline(yintercept = 0.95) +
-  geom_vline(xintercept = df$Kumuliert[53]) +
+  geom_hline(yintercept = 0.95, color = "red") +
+  geom_vline(xintercept = round(df$Kumuliert[53], digits = 2), color = "red") +
   ggtitle("Empirische Verteilungsfunktion: Crowdsourcing") +
   ylab("Kumulierte relative Anteile: Personen") +
   xlab("Kumulierte relative Anteile: Einträge")
-  
+
+ggsave("crowdsource_ecdf.png", plot = empi, width = 18, height = 12, units = "cm")  
 
 # Hauptkategorieplot
 require(reshape2)
@@ -365,6 +373,12 @@ obj <- as.data.frame.matrix(sp_crowd@coords)
 plt2 <- ggmap(map) + 
   stat_bin2d(mapping = aes(x = lng, y = lat), data = obj, bins = 30) 
 plt2
+
+# lets try something funky
+obj$class <- obj$lng* obj$lat
+plt3 <- ggmap(map) + 
+  stat_bin2d(mapping = aes(x = lng, y = lat, group = class), data = obj, bins = 30)
+plt3
 
 library("dplyr")
 romanisch <- readRDS("listone.RDS")
@@ -501,7 +515,7 @@ top10$title <- c("Artikel auf rosenheim24.de", "Beitrag auf ddolomiti.eu", "Beit
                  "Vortrag in Sils-Maria", "Artikel auf zalp.ch", "Artikel in Der Bote", 
                  "Interview ORF", "Interview BR", "Facebook: Französischer Spitzenreiter",
                  "Facebook: Beste Gemeinde")
-top10$title <- c("Dialekt Themenwoche im BR", "Artikel auf rosenheim 24.de", "Beitrag auf Facebookseite Servizio Minoranze", 
+top10$title <- c("Dialekt Themenwoche im BR", "Artikel auf rosenheim24.de", "Beitrag auf Facebookseite Servizio Minoranze", 
                  "Artikel auf zalp.ch", "Artikel auf lmu.de", "Bericht auf brennerbasisdemokratie.eu", 
                  "Interview BR", "Interview ORF", "Beitrag auf ddolomiti.eu", "Facebook Promovideo")
 
@@ -522,25 +536,35 @@ top10map <- ggmap(map) +
 top10map
 
 # crowd has to have lon & lat columns
-get_topxmap <- function(top = 1, dta = top10, mp = map) {
+get_topxmap <- function(top = 1, dta = top10, mp = map, range = 1) {
   topx <- dta[top,] 
   tmp <- str_split(crowd$Erfasst_Am, pattern = " ")
   tmp <- sapply(tmp, `[[`, 1)
   crowd$day <- tmp
   crowd$day <- as.Date(crowd$day)
   topx$dates <- as.Date(topx$dates)
-  final <- crowd[crowd$day %in% topx$dates,]
+  
+  li <- list()
+  for (i in seq_len(range)) {
+    # range 1 => nur am tag der aktion; range 2 => tag der aktion + folgetag etc
+  li[[i]] <- crowd[crowd$day %in% (topx$dates + i - 1),]
+  }
+  final <- dplyr::bind_rows(li)
+  
   topxmap <- ggmap(mp) +
     geom_count(aes(x = lng, y = lat), color = "red", alpha = 0.5, data = final) +
-    ggtitle(topx$title)
+    ggtitle(topx$title) +
+    #scale_size_continuous(limits=c(1,250))
+    scale_size_identity(trans = "sqrt", guide = "legend")
+  topxmap$labels$size <- "n Einträge"
   topxmap
 }
 
-top1map <- get_topxmap(1)
+top1map <- get_topxmap(top = 1, range = 2)
 ggsave("top1map.png", plot = top1map, width = 16, height = 10, units = "cm")
 
 for (i in 1:10) {
-  tmp <- get_topxmap(i)
+  tmp <- get_topxmap(top = i, range = 2)
   ggsave(paste0("top", i, "map.png"), plot = tmp, width = 16, height = 10, units = "cm")
 }
 
