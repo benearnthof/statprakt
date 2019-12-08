@@ -116,7 +116,7 @@ mappr <- function(can = canvas) {
       df <- distinct(df)
       map <- map +
         geom_polygon(aes(x = lng, y = lat),
-                     data = df, color = colors[i], fill = colors[i], alpha = 0.5)
+                     data = df, color = colors[i], fill = colors[i], alpha = 0.75)
     }
   }
   map
@@ -187,3 +187,31 @@ plot(gates)
 plot(l8r_g8r, add = TRUE)
 
 saveRDS(l8r_g8r, file = "inschriften_in_alpenraum.RDS")
+
+# inschriften in den einzelnen teilraeumen 
+
+rom <- list(one)
+ger <- list(two)
+sla <- list(tre)
+
+rom <- raster::aggregate(listaggreg8r(rom))
+crs(rom) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+ger <- raster::aggregate(listaggreg8r(ger))
+crs(ger) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+sla <- raster::aggregate(listaggreg8r(sla))
+crs(sla) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+plot(rom)
+plot(ger)
+plot(sla)
+
+rom_points <- points[!is.na(over(points, rom)),]
+ger_points <- points[!is.na(over(points, ger)),]
+sla_points <- points[!is.na(over(points, sla)),]
+
+saveRDS(sla, file = "sla_polygon.RDS")
+saveRDS(ger, file = "ger_polygon.RDS")
+saveRDS(rom, file = "rom_polygon.RDS")
+
+saveRDS(sla_points, file = "sla_inschriften.RDS")
+saveRDS(ger_points, file = "ger_inschriften.RDS")
+saveRDS(rom_points, file = "rom_inschriften.RDS")

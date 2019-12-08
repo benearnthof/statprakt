@@ -71,7 +71,7 @@ tibble <- data[data$class == "insch",] %>%
   group_by(xbin, ybin) %>% 
   mutate(bin_count = n())
 
-# tibble <- tibble[3:ncol(tibble)]
+tibble <- tibble[3:ncol(tibble)]
 tibble <- unique(tibble)
 
 midpoints <- function(x, dp=2){
@@ -82,8 +82,10 @@ midpoints <- function(x, dp=2){
 
 tibble$x <- midpoints(tibble$xbin)
 tibble$y <- midpoints(tibble$ybin)
+tibble$rel <- tibble$bin_count / sum(tibble$bin_count)
+tibble$rel <- tibble$rel * 100
 
-ggplot(tibble, aes(x, y, z = bin_count)) + stat_summary_2d(bins = 30)
+# ggplot(tibble, aes(x, y, z = bin_count)) + stat_summary_2d(bins = 30)
 
 width <- function(x) {
   lower <- as.numeric(gsub(",.*","",gsub("\\(|\\[|\\)|\\]","", x)))
@@ -95,6 +97,17 @@ mean(width(tibble$ybin)) # 0.2
 
 ggplot(tibble, aes(x, y, fill = bin_count, group = bin_count)) +
   geom_bin2d(aes(group = bin_count), binwidth = c(0.4, 0.2), drop = TRUE)
+
+canvas
+
+canvas +
+  geom_bin2d(aes(x = x, y = y, fill = rel, 
+                 group = rel), binwidth = c(0.4, 0.2), drop = TRUE, data = tibble) +
+  scale_fill_continuous(limits = c(0, 7), name = "Anteile in %", type = "viridis") +
+  ggtitle("Relative Anteile der Inschriften")  
+  
+  
+
 
 test2 <- data %>% 
   mutate(xbin = cut(x, breaks = 30),
