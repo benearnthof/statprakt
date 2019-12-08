@@ -689,3 +689,4 @@ plot(idtable_orig)
 
 df <- as.data.frame(sort(idtable_orig, decreasing = TRUE))
 names(df) <- c("id", "freq")
+

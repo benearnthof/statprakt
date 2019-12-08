@@ -175,3 +175,4 @@ sl2 <- sl2 + geom_point(aes(x = lng , y = lat, colour = "Inschriften"), data = d
   ggtitle("Vergleich von sla_lat mit den lat. Inschriften")
 
 ggsave("sla_lat_insch.png", plot = sl2, width = 16, height = 10, units = "cm")
+

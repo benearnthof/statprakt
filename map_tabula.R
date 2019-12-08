@@ -36,7 +36,7 @@ inschriften_map <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 42,
                                       right = 20, top = 50), zoom = 6, maptype = "toner-lite"))
 
 inschriften_map <-inschriften_map + 
-  stat_bin2d(mapping = aes(x = lng , y = lat), data = df_insch, bins = 100, alpha = 0,7)+
+  stat_bin2d(mapping = aes(x = lng , y = lat), data = df_insch,bins = 100)+
   scale_fill_gradient(low ="darkseagreen", high = "darkblue", limits = c(0,300) ) +
   ggtitle("Fundorte von lat. Inschriften")
 inschriften_map
@@ -51,7 +51,7 @@ inschriften_map_eingegrenzt <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 4
                                                 right = 20, top = 50), zoom = 6, maptype = "toner-lite"))
 
 inschriften_map_eingegrenzt <-inschriften_map_eingegrenzt + 
-  stat_bin2d(mapping = aes(x = lng , y = lat), data = eingegrenzt_df_insch, bins = 100, alpha = 0,7)+
+  stat_bin2d(mapping = aes(x = lng , y = lat), data = eingegrenzt_df_insch, bins = 100)+
   scale_fill_gradient(low ="darkseagreen", high = "darkblue", limits = c(0,300) ) +
   ggtitle("Fundorte von lat. Inschriften")
 inschriften_map_eingegrenzt
@@ -82,21 +82,6 @@ insch2 <- insch2 + geom_point(aes(x = lng , y = lat, colour = "Tabula"), data = 
 
 ggsave("Zoom_Inschriften_Tabula_Map.png", plot =insch2 , width = 16, height = 10, units = "cm")
 
-# Tabula Map mit geom_point
-#Funktioniert nicht :/
-df_tabula <- as.data.frame(table(tabula@data$Geodaten))
-coords_tabula <- get_coords(df_tabula$Var1)
-df_tabula$lng <- coords_tabula$lng
-df_tabula$lat <- coords_tabula$lat
-sp_tabula <- df_tabula
-
-map_tabula <- get_stamenmap(bbox = c(left = 1, bottom = 42, 
-                                     right = 20, top = 50), zoom = 6, maptype = "toner-lite") 
-
-plot_tabula <- ggmap(map_tabula) + 
-  geom_point(mapping = aes(x = lng, y = lat), data = sp_tabula)
-
-plot_tabula
 
 # noch von interesse: Wie viele der Umgebungen der Punkte der Tabula enthalten 
 # Punkte der Inschriftenfunde? Wenn ja, in welchen Radien um die Straßenpunkte 
