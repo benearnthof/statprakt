@@ -39,6 +39,7 @@ for (i in 1:length(li)) {
   lst[[i]] <- points
 }
 
+sp_crowd <- readRDS(file = "sp_crowd.RDS")
 box <- sp_crowd@bbox
 box[2,] <- c(44, 49)
 box[,1] <- c(4.5, 43.3)
@@ -168,6 +169,7 @@ plot(raster::aggregate(g8r))
 
 gates <- raster::aggregate(g8r)
 crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+saveRDS(gates, file = "alpenraum_polygon.RDS")
 # lets see what points fall into the area at all
 pnts_insch <- get_coords(inschriften$Geodaten)
 
@@ -184,3 +186,4 @@ nrow(l8r_g8r@coords)
 plot(gates)
 plot(l8r_g8r, add = TRUE)
 
+saveRDS(l8r_g8r, file = "inschriften_in_alpenraum.RDS")
