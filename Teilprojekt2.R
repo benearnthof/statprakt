@@ -161,7 +161,7 @@ map_vor <- get_stamenmap(bbox = c(left = 4, bottom = 42,
 plot_rom_vor <- ggmap(map_vor) + 
   stat_bin2d(mapping = aes(x = lng, y = lat), data = sp_rom_vor , bins = 50, 
              alpha = 0.7) + 
-  scale_fill_gradient("Anzahl der Belege", low = "plum2", high = "brown4") +
+  scale_fill_gradient("Anzahl der Belege", low = "lightsalmon", high = "red") +
   ggtitle("Romanisch mit Basistyp 'Vorrömisch'")
 plot_rom_vor 
 ggsave("Romanisch_Vorrömisch.png", plot = plot_rom_vor, width = 16, 
@@ -186,7 +186,7 @@ map_germ <- get_stamenmap(bbox = c(left = 4, bottom = 42,
 plot_germ <- ggmap(map_germ) + 
   stat_bin2d(mapping = aes(x = lng, y = lat), data = sp_germ , bins = 50, 
              alpha = 0.8) +
-  scale_fill_gradient("Anzahl der Belege", low = "skyblue", high = "navy" ) +
+  scale_fill_gradient("Anzahl der Belege", low = "lightsalmon", high = "red" ) +
   ggtitle("Germanisch mit den Basistypen 'Vorrömisch' und 'Lateinisch'")
 plot_germ
 ggsave("Germanisch_Basistypen.png", plot = plot_germ, width = 16, 
@@ -207,7 +207,7 @@ map_slaw <- get_stamenmap(bbox = c(left = 4, bottom = 42,
 plot_slaw <- ggmap(map_slaw) + 
   stat_bin2d(mapping = aes(x = lng, y = lat), data = sp_slaw , bins = 50, 
              alpha = 0.8) +
-  scale_fill_gradient("Anzahl der Belege", low = "lightgoldenrod2", high = "orange4") +
+  scale_fill_gradient("Anzahl der Belege", low = "lightsalmon", high = "red") +
   ggtitle("Slavisch mit den Basistypen 'Vorrömisch' und 'Lateinisch'")
 plot_slaw
 
