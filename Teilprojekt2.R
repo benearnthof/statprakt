@@ -121,7 +121,7 @@ map_rom <- get_stamenmap(bbox = c(left = 4, bottom = 42,
 plot_rom_lat <- ggmap(map_rom) + 
   stat_bin2d(mapping = aes(x = lng, y = lat), data = sp_rom_lat , 
              bins = 50, alpha = 0.7) +
-  scale_fill_gradient("Anzahl", low = "lightsalmon", high = "red") +
+  scale_fill_gradient("Anzahl der Belege", low = "lightsalmon", high = "red") +
   ggtitle("Romanisch mit Basistyp 'Lateinisch'")
 plot_rom_lat
 
@@ -161,8 +161,8 @@ map_vor <- get_stamenmap(bbox = c(left = 4, bottom = 42,
 plot_rom_vor <- ggmap(map_vor) + 
   stat_bin2d(mapping = aes(x = lng, y = lat), data = sp_rom_vor , bins = 50, 
              alpha = 0.7) + 
-  scale_fill_gradient("Anzahl", low = "plum2", high = "brown4") +
-  ggtitle("Romanisch mit 'Vorrömisch'")
+  scale_fill_gradient("Anzahl der Belege", low = "plum2", high = "brown4") +
+  ggtitle("Romanisch mit Basistyp 'Vorrömisch'")
 plot_rom_vor 
 ggsave("Romanisch_Vorrömisch.png", plot = plot_rom_vor, width = 16, 
        height = 12, units = "cm")
@@ -184,7 +184,7 @@ map_germ <- get_stamenmap(bbox = c(left = 4, bottom = 42,
                           maptype = "toner-lite") 
 
 plot_germ <- ggmap(map_germ) + 
-  stat_bin2d(mapping = aes(x = lng, y = lat), data = sp_germ , bins = 60, 
+  stat_bin2d(mapping = aes(x = lng, y = lat), data = sp_germ , bins = 50, 
              alpha = 0.8) +
   scale_fill_gradient("Anzahl der Belege", low = "skyblue", high = "navy" ) +
   ggtitle("Germanisch mit den Basistypen 'Vorrömisch' und 'Lateinisch'")
@@ -205,7 +205,7 @@ map_slaw <- get_stamenmap(bbox = c(left = 4, bottom = 42,
                                    right = 18, top = 52), zoom = 6, 
                           maptype = "toner-lite") 
 plot_slaw <- ggmap(map_slaw) + 
-  stat_bin2d(mapping = aes(x = lng, y = lat), data = sp_slaw , bins = 60, 
+  stat_bin2d(mapping = aes(x = lng, y = lat), data = sp_slaw , bins = 50, 
              alpha = 0.8) +
   scale_fill_gradient("Anzahl der Belege", low = "lightgoldenrod2", high = "orange4") +
   ggtitle("Slavisch mit den Basistypen 'Vorrömisch' und 'Lateinisch'")
