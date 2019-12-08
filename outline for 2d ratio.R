@@ -125,6 +125,13 @@ ggplot(test, aes(x, y)) + geom_bin2d()
 
 ggplot(test2, aes(x, y, z = count_sampl)) + stat_summary_2d()
 
-
-
-
+# read the points for all 3 areas into here
+# get a canvas for all 3 areas based on their bounding boxes
+# make a map of the inschriften that fall into each area
+# read the polygons of the areas into here
+# get the points of the basistypen that fall into each area
+# make a map of the basistypen that fall into each area
+# leftjoin the tibbles of inschriften and basistypen for every area
+# set the NAs to 0
+# calculate percentage point differences for every cell
+# make a map of the percentage point differences for all 3 areas
