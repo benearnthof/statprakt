@@ -480,10 +480,10 @@ names(uniquepoints) <- c("ID", "lng", "lat", "Anzahl Einträge der Power User")
 plt3 <- plt2 +
   geom_point(aes(x = lng, y = lat, size = `Anzahl Einträge der Power User`), 
              data = uniquepoints, col = "red") +
-  ggtitle("Heatmap der Crowdsourcing-Belege")
+  ggtitle("Power User")
 plt3
 
-ggsave("Heatmap_Crowdsourcing_Poweruser.png", plot = plt3, width = 16, height = 12, units = "cm")
+ggsave("Crowdsourcing_Poweruser.png", plot = plt3, width = 16, height = 12, units = "cm")
 
 names(uniquepoints) <- c("ID", "lng", "lat", "count")
 
