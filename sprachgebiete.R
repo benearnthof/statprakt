@@ -46,6 +46,7 @@ box[,2] <- c(16.5, 48.5)
 coordinates(lst[[1]])
 map <- get_stamenmap(bbox = box, zoom = 6, maptype = "toner-lite") 
 df <- as.data.frame.matrix(lst[[1]]@coords)
+
 df <- distinct(df)
 canvas <- ggmap(map)
 res1 <- canvas +
@@ -95,9 +96,13 @@ ggplot(data = df) +
 # saveRDS(listfiv, "listfiv.RDS")
 # saveRDS(listsix, "listsix.RDS")
 # saveRDS(listsev, "listsev.RDS")
-
+library("dplyr")
+library("raster")
+library("sp")
+library("mapview")
 one <- readRDS("listone.RDS")
 two <- readRDS("listtwo.RDS")
+
 tre <- readRDS("listtre.RDS")
 fou <- readRDS("listfor.RDS")
 fiv <- readRDS("listfiv.RDS")
@@ -137,7 +142,9 @@ plot(poly2)
 
 wot <- rbind(poly, poly2)
 plot(wot)
+library("rgeos")
 agg <- raster::aggregate(wot)
+
 plot(agg)
 
 # wrapping stuff in functions is what i do best
@@ -168,6 +175,7 @@ plot(raster::aggregate(g8r))
 
 gates <- raster::aggregate(g8r)
 crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
 # lets see what points fall into the area at all
 pnts_insch <- get_coords(inschriften$Geodaten)
 
@@ -183,3 +191,4 @@ nrow(l8r_g8r@coords)
 
 plot(gates)
 plot(l8r_g8r, add = TRUE)
+
