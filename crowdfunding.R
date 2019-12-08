@@ -371,7 +371,8 @@ plt <- ggmap(map) +
              data = df, alpha = .5)
 obj <- as.data.frame.matrix(sp_crowd@coords)
 plt2 <- ggmap(map) + 
-  stat_bin2d(mapping = aes(x = lng, y = lat), data = obj, bins = 30) 
+  stat_bin2d(mapping = aes(x = lng, y = lat), data = obj, bins = 30) +
+  scale_fill_gradient("Anzahl der Eintragungen", low ="darkseagreen1", high = "darkseagreen4", limits = c(0, 800))
 plt2
 
 # lets try something funky
@@ -472,11 +473,17 @@ uniquepoints$count <- as.vector(tbl)
 names(uniquepoints) <- c("ID", "lng", "lat", "count")
 
 saveRDS(uniquepoints, file = "uniquepoints.RDS")
+plt2$labels$fill <- "Anzahl Beiträge"
+names(uniquepoints) <- c("ID", "lng", "lat", "Anzahl Eintragungen Poweruser")
 plt3 <- plt2 +
-  geom_point(aes(x = lng, y = lat, size = count), data = uniquepoints, col = "orange") + ggtitle("Heatmap der Crowdsourcing-Belege")
+  geom_point(aes(x = lng, y = lat, size = `Anzahl Eintragungen Poweruser`), 
+             data = uniquepoints, col = "orange") +
+  ggtitle("Heatmap der Crowdsourcing-Belege")
 plt3
 
 ggsave("Heatmap_Crowdsourcing_Poweruser.png", plot = plt3, width = 16, height = 12, units = "cm")
+
+names(uniquepoints) <- c("ID", "lng", "lat", "count")
 
 # kategorie maps hinzufügen 
 # 
