@@ -116,7 +116,7 @@ mappr <- function(can = canvas) {
       df <- distinct(df)
       map <- map +
         geom_polygon(aes(x = lng, y = lat),
-                     data = df, color = colors[i], fill = colors[i])
+                     data = df, color = colors[i], fill = colors[i], alpha = 0.5)
     }
   }
   map
