@@ -36,8 +36,8 @@ inschriften_map <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 42,
                                       right = 20, top = 50), zoom = 6, maptype = "toner-lite"))
 
 inschriften_map <-inschriften_map + 
-  stat_bin2d(mapping = aes(x = lng , y = lat), data = df_insch, bins = 100, alpha = 0,7)+
-  scale_fill_gradient(low ="darkseagreen", high = "darkblue", limits = c(0,300) ) +
+  stat_bin2d(mapping = aes(x = lng , y = lat), data = df_insch, bins = 50)+
+  scale_fill_gradient(low ="darkseagreen", high = "navy", limits = c(0,300) ) +
   ggtitle("Fundorte von lat. Inschriften")
 inschriften_map
 # Grafik erstellen zu Inschriften

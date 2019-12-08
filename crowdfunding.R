@@ -113,6 +113,7 @@ df2018 <- df[(df$days <= "2018-12-31") & (df$days >= "2018-01-01"),]
 df2019 <- df[df$days > "2018-12-31",]
 
 saveRDS(df2017, "df2017.RDS")
+
 saveRDS(df2018, "df2018.RDS")
 saveRDS(df2019, "df2019.RDS")
 
@@ -326,7 +327,7 @@ sp_crowd <- crowd
 coordinates(sp_crowd) <- ~ lng + lat
 crs(sp_crowd) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
-mapview(sp_crowd, zcol = "Hauptkategorie")
+#mapview(sp_crowd, zcol = "Hauptkategorie")
 
 require(ggmap)
 x <- sp_crowd@coords
@@ -371,8 +372,8 @@ plt <- ggmap(map) +
              data = df, alpha = .5)
 obj <- as.data.frame.matrix(sp_crowd@coords)
 plt2 <- ggmap(map) + 
-  stat_bin2d(mapping = aes(x = lng, y = lat), data = obj, bins = 30) +
-  scale_fill_gradient("Anzahl der Eintragungen", low ="darkseagreen1", high = "darkseagreen4", limits = c(0, 800))
+  stat_bin2d(mapping = aes(x = lng, y = lat), data = obj, bins = 30, alpha = 0.7) +
+  scale_fill_gradient("Anzahl der Einträge", low ="darkseagreen1", high = "darkseagreen4", limits = c(0, 800))
 plt2
 
 # lets try something funky
@@ -391,18 +392,18 @@ plot3 <- plt2 +
 germanisch <- readRDS("listtwo.RDS")
 df_ger <- as.data.frame.matrix(germanisch[[1]]@coords)
 df_ger <- distinct(df_ger)
+
 plot4 <- plot3 +
   geom_polygon(data = df_ger, aes(x = lng, y = lat, colour = "Germanisch"), fill = NA, size =1) +
   ggtitle("Crowdsourcing: Räumliche Verteilung")
-
-
 slavisch <- readRDS("listtre.RDS")
+
 df_slav <- as.data.frame.matrix(slavisch[[1]]@coords)
 df_slav <- distinct(df_slav)
 plot5 <- plot4 + 
   geom_polygon(data = df_slav, aes(x = lng, y = lat, colour = "Slavisch"), fill = NA, size = 1) +
   scale_colour_manual("Sprachgebiete",values = c(Germanisch ="blue", Romanisch = "red", Slavisch = "gold")) +
-  scale_fill_gradient("Anzahl der Eintragungen", low ="darkseagreen1", high = "darkseagreen4", limits = c(0, 800))
+  scale_fill_gradient("Anzahl der Einträge", low ="darkseagreen1", high = "darkseagreen4", limits = c(0, 800))
 plot5
 
 ggsave("Crowdsourcing_raeumlich.png", plot = plot5, width = 16, height = 12, units = "cm")
@@ -462,6 +463,7 @@ userpoints$points <- userpoints$Georeferenz
 userpoints$lng <- get_coords(userpoints$points)[[1]]
 userpoints$lat <- get_coords(userpoints$points)[[2]]
 
+
 uniquepoints <- userpoints[!duplicated(userpoints$Id_Informant), ]
 uniquepoints <- cbind(uniquepoints$Id_Informant, uniquepoints$lng, uniquepoints$lat)
 
@@ -474,10 +476,10 @@ names(uniquepoints) <- c("ID", "lng", "lat", "count")
 
 saveRDS(uniquepoints, file = "uniquepoints.RDS")
 plt2$labels$fill <- "Anzahl Beiträge"
-names(uniquepoints) <- c("ID", "lng", "lat", "Anzahl Eintragungen Poweruser")
+names(uniquepoints) <- c("ID", "lng", "lat", "Anzahl Einträge der Power User")
 plt3 <- plt2 +
-  geom_point(aes(x = lng, y = lat, size = `Anzahl Eintragungen Poweruser`), 
-             data = uniquepoints, col = "orange") +
+  geom_point(aes(x = lng, y = lat, size = `Anzahl Einträge der Power User`), 
+             data = uniquepoints, col = "red") +
   ggtitle("Heatmap der Crowdsourcing-Belege")
 plt3
 
@@ -524,9 +526,9 @@ top10$title <- c("Artikel auf rosenheim24.de", "Beitrag auf ddolomiti.eu", "Beit
                  "Vortrag in Sils-Maria", "Artikel auf zalp.ch", "Artikel in Der Bote", 
                  "Interview ORF", "Interview BR", "Facebook: Französischer Spitzenreiter",
                  "Facebook: Beste Gemeinde")
-top10$title <- c("Dialekt Themenwoche im BR", "Artikel auf rosenheim24.de", "Beitrag auf Facebookseite Servizio Minoranze", 
-                 "Artikel auf zalp.ch", "Artikel auf lmu.de", "Bericht auf brennerbasisdemokratie.eu", 
-                 "Interview BR", "Interview ORF", "Beitrag auf ddolomiti.eu", "Facebook Promovideo")
+top10$title <- c("Dialekt Themenwoche im BR (27.04.2018)", "Artikel auf rosenheim 24.de (19.06.2018)", "Beitrag auf Facebookseite Servizio Minoranze (09.08.2019)", 
+                 "Artikel auf zalp.ch (27.03.2017)", "Artikel auf lmu.de (15.05.2017)", "Bericht auf brennerbasisdemokratie.eu (30.07.2019)", 
+                 "Interview BR (11.04.2017)", "Interview ORF (20.05.2017)", "Beitrag auf ddolomiti.eu (08.08.2019)", "Facebook Promovideo (14.03.2017)")
 
 
 # lets get the coordinates of the entries on the top 10 days to plot them on maps
@@ -565,7 +567,7 @@ get_topxmap <- function(top = 1, dta = top10, mp = map, range = 1) {
     ggtitle(topx$title) +
     #scale_size_continuous(limits=c(1,250))
     scale_size_identity(trans = "sqrt", guide = "legend")
-  topxmap$labels$size <- "n Einträge"
+  topxmap$labels$size <- "Anzahl der Einträge"
   topxmap
 }
 
@@ -580,7 +582,7 @@ for (i in 1:10) {
 
 #plot für alle Aktionen über 2 Tage
 aktionen <- dfpubresults[order(dfpubresults$pubresults, decreasing = TRUE),][1:43,]
-aktionen$title <- c("Dialekt Themenwoche im BR (27.04.2018)", "Artikel auf rosenheim 24.de (19.06.2018)", "Beitrag auf Web- und Facebookseite Servizio Minoranze (09.08.2019)", 
+aktionen$title <- c("Dialekt Themenwoche im BR (27.04.2018)", "Artikel auf rosenheim 24.de (19.06.2018)", "Beitrag auf Facebookseite Servizio Minoranze (09.08.2019)", 
                     "Artikel auf zalp.ch (27.03.2017)", "Artikel auf lmu.de (15.05.2017)", "Bericht auf brennerbasisdemokratie.eu (30.07.2019)", 
                     "Interview BR (11.04.2017)", "Interview ORF (20.05.2017)", "Beitrag auf ddolomiti.eu (08.08.2019)", "Facebook Promovideo (14.03.2017)", " Beitrag in der Facebook-Gruppe 'Solo alpeggio' (05.12.2017)", "Beitrag auf Facebook 'beste Gemeinde' (16.05.2017)", "Facebook: 3000 Belege (30.03.2017)", "Artikeln in 'der Bote' (23.05.2017)", "Facebook: 4000 Belege (13.05.2017)", "offizieller Start Crowdsourcing (Facebook-Post) (10.02.2017)", "Artikel im 'il Gazzettino di Belluno' (04.08.2019)", "www.milchhandwerk.info (04.04.2017)", "Facebook: neuer Flyer (20.04.2017)", "Flyer-Verteilung in Colle S. Lucia (24.08.2019)", "VerbaAlpina Champion 2/17 (28.02.2017)", "Vortrag Bayerischer Almbauerntag (07.10.2017)", "Post auf Reddit.com/austria (20.06.2018)", "Artikel auf bergwelten.com (17.03.2017)", 
                     "VerbaAlpina Champion 3/17 (01.04.2017)", "Bayern2 'Tagesgespräch' (21.02.2019)", "VerbaAlpina Champion 4/17 (01.05.2017)", "Post auf Reddit.com/france und Reddit.com/schweiz (02.07.2018)", "Vorschau auf lausc.it (23.07.2019)", "Artikel in der La Usc di Ladins (26.07.2019)", "Beitrag in der Facebook-Gruppe 'Allevatori italiani' (04.12.2017)", " Vortrag beim Almlehrkurs in Bad Feilnbach (16.02.2018)", " Interview Radio Regenbogen (10.06.2018)", " Facebook: Weihnachtsgruß (19.12.2016)", "Facebook: französischer Spitzenreiter (29.06.2017)", "Vortrag in Sils-Maria (27.12.2017)", "Artikel in 'Anzeiger von Saanen' (23.02.2018)", 
@@ -689,3 +691,4 @@ plot(idtable_orig)
 
 df <- as.data.frame(sort(idtable_orig, decreasing = TRUE))
 names(df) <- c("id", "freq")
+
