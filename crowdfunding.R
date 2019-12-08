@@ -377,7 +377,7 @@ plt2
 # lets try something funky
 obj$class <- obj$lng* obj$lat
 plt3 <- ggmap(map) + 
-  stat_bin2d(mapping = aes(x = lng, y = lat, group = class), data = obj, bins = 30)
+  stat_bin2d(mapping = aes(x = lng, y = lat, group = class), data = obj, bins = 30, alpha = 0.7)
 plt3
 
 library("dplyr")
@@ -401,7 +401,7 @@ df_slav <- distinct(df_slav)
 plot5 <- plot4 + 
   geom_polygon(data = df_slav, aes(x = lng, y = lat, colour = "Slavisch"), fill = NA, size = 1) +
   scale_colour_manual("Sprachgebiete",values = c(Germanisch ="blue", Romanisch = "red", Slavisch = "gold")) +
-  scale_fill_gradient("Anzahl", low ="darkseagreen1", high = "darkseagreen4", limits = c(0, 800) )
+  scale_fill_gradient("Anzahl", low ="darkseagreen1", high = "darkseagreen4", limits = c(0, 800))
 plot5
 
 ggsave("Crowdsourcing_raeumlich.png", plot = plot5, width = 16, height = 12, units = "cm")
