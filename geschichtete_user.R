@@ -1,6 +1,19 @@
-#1 Eintrag - 313 User
-
-
+#Alle Beiträge
+all <- ids
+dimnames(all)
+index_all <- as.numeric(dimnames(all)[[1]])
+crowd_all <- crowd[crowd$Id_Informant %in% index_all, ]
+nrow(crowd_all)
+table(crowd$Hauptkategorie)
+#1 Eintrag - 313 User mit je einem Beitrag
+beitrag_1 <- ids[ids == 1]
+dimnames(beitrag_1)
+index_1 <- as.numeric(dimnames(beitrag_1)[[1]])
+subset_1 <- crowd[crowd$Id_Informant %in% index_1, ]
+nrow(subset_1)
+filter_subset_1 <- subset_1[!duplicated(subset_1$Id_Informant),]
+nrow(filter_subset_1)
+table(subset_1$Hauptkategorie)
 #2 - 10 Einträge = 441 User gesamt mit Gesamt 2131 Beiträgen
 ids <- table(crowd$Id_Informant)
 sum(ids[ids == 1])
@@ -131,8 +144,20 @@ table(subset_301_500$Hauptkategorie)
 
 
 #Plot erstelllen
-#a <- 
-#barplot(table(data$))
+#Data frame erstllen
+group <- c("gruppe1", "gruppe2", "gruppe3", "gruppe4", "gruppe5", "gruppe6" )
+milch <- c("milch")
+vieh <- c("vieh")
+allgemein <- c("allgemein")
 
+
+
+anzahl_Beitraege <- c(subset_1)
+Hauptkategorie <- c(milch, vieh, allgemein)
+user_gruppen <- c(subset_1)
+geschichtete_user <- data.frame(anzahl_Beitraege, Hauptkategorie, user_gruppen)
+
+geschichtete_user <- ggplot(geschichtete_user, aes(fill=user_gruppen, y=anzahl_Beitraege, x=Hauptkategorie)) + 
+  geom_bar(position="stack", stat="identity")
 
 
