@@ -163,7 +163,7 @@ DF <- read.table(text="Rank Milchverarbeitung     Viehhaltung     Allgemein
 library(reshape2)
 DF1 <- melt(DF, id.var="Rank")
 library(ggplot2)
-ggplot(DF1, aes(x = Rank, y = value, fill = variable)) + 
+gestapelter_user <- ggplot(DF1, aes(x = Rank, y = value, fill = variable)) + 
   geom_bar(stat = "identity") +
   ylab("Anzahl der Eintragungen") +
   scale_x_discrete(name ="User gruppiert nach Anzahl der Eintragungen", 
@@ -171,5 +171,5 @@ ggplot(DF1, aes(x = Rank, y = value, fill = variable)) +
   scale_fill_discrete(name = "Hauptkategorie") +
   theme_bw()+
   ggtitle("Eintragungsverhalten der User")
-ggsave("gestapelter_Barplot.png", plot = plot_2019, width = 18, height = 12, units = "cm")
+ggsave("gestapelter_Barplot.png", plot = gestapelter_user, width = 18, height = 12, units = "cm")
   
