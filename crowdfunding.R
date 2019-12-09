@@ -278,6 +278,7 @@ ggplot(data = lorenz) +
   ggtitle("Empirische Verteilungsfunktion Crowdsourcing")
 
 empi <- ggplot(data = df, aes(x = Kumuliert, y = Personenkumuliert)) +
+  stat_ecdf()
   geom_step(size = 1.5) +
   scale_x_continuous(limits = c(0, 1), breaks = c(0, 0.25, 0.5, round(df$Kumuliert[53], digits = 2), 
                                        0.75, 1)) +
