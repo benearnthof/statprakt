@@ -288,7 +288,8 @@ ggplot(sla_insch_tibble, aes(x, y, fill = bin_ratio_insch, group = bin_ratio_ins
              binwidth = c(mean(width(sla_fulljoin$xbin)),
                           mean(width(sla_fulljoin$ybin))), drop = TRUE) +
   xlim(c(13.2, 15.75)) + 
-  ylim(c(45.85, 46.65))
+  ylim(c(45.85, 46.65)) + 
+  theme(legend.position = "none")
 
 sla_types_tibble <- sla_fulljoin %>% filter(class.y == "types")
 ggplot(sla_types_tibble, aes(x, y, fill = bin_ratio_types, group = bin_ratio_types)) +
@@ -296,14 +297,16 @@ ggplot(sla_types_tibble, aes(x, y, fill = bin_ratio_types, group = bin_ratio_typ
              binwidth = c(mean(width(sla_fulljoin$xbin)),
                           mean(width(sla_fulljoin$ybin))), drop = TRUE) +
   xlim(c(13.2, 15.75)) + 
-  ylim(c(45.85, 46.65))
+  ylim(c(45.85, 46.65)) + 
+  theme(legend.position = "none")
 
 ggplot(sla_fulljoin, aes(x, y, fill = bin_ratio_diffs, group = bin_ratio_diffs)) + 
   geom_bin2d(aes(group = bin_ratio_diffs),
              binwidth = c(mean(width(sla_fulljoin$xbin)),
                           mean(width(sla_fulljoin$ybin))), drop = TRUE) +
   xlim(c(13.2, 15.75)) + 
-  ylim(c(45.85, 46.65))
+  ylim(c(45.85, 46.65)) + 
+  theme(legend.position = "none")
 
 # sort types by epoch
 # wrap everything into function
