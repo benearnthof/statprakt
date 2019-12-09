@@ -203,6 +203,7 @@ cor(x, x2)
 stats::acf(df$freq, lag.max = 20, type = "correlation")
 
 informanten <- unique(crowd$Id_Informant)
+
 length(informanten)
 nrow(crowd)/length(informanten)
 
@@ -252,6 +253,7 @@ abline(v = df$Kumuliert[53], col = "red")
 install.packages("ineq")
 # library(ineq)
 x <- runif(20)
+
 wot <- Lc(df$Personenanteil, plot = TRUE)
 abline(h = 1 - df$Kumuliert[53], col = "red")
 which(1 - df$Personenkumuliert < 0.05)
