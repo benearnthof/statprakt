@@ -168,7 +168,7 @@ plot(g8r)
 plot(raster::aggregate(g8r))
 
 gates <- raster::aggregate(g8r)
-crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+raster::crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 saveRDS(gates, file = "alpenraum_polygon.RDS")
 # lets see what points fall into the area at all
 pnts_insch <- get_coords(inschriften$Geodaten)
@@ -195,11 +195,11 @@ ger <- list(two)
 sla <- list(tre)
 
 rom <- raster::aggregate(listaggreg8r(rom))
-crs(rom) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+raster::crs(rom) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 ger <- raster::aggregate(listaggreg8r(ger))
-crs(ger) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+raster::crs(ger) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 sla <- raster::aggregate(listaggreg8r(sla))
-crs(sla) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+raster::crs(sla) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 plot(rom)
 plot(ger)
 plot(sla)
