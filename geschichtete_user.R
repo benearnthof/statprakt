@@ -1,4 +1,4 @@
-#Alle Beiträge gesamt
+#Alle Beiträge gesamt dfd
 all <- ids
 dimnames(all)
 index_all <- as.numeric(dimnames(all)[[1]])
