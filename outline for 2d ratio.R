@@ -1,5 +1,6 @@
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 
 employee <- employee <- c('John','Dave','Paul','Ringo','George','Tom','Jim','Harry','Jamie','Adrian')
 quality <- c('good', 'bad')
@@ -117,7 +118,7 @@ sla_insch <- readRDS(file = "sla_inschriften.RDS")
 ger_insch <- readRDS(file = "ger_inschriften.RDS")
 rom_insch <- readRDS(file = "rom_inschriften.RDS")
 
-zling <- read.csv("~/Desktop/wd/statprakt/z_ling.csv", encoding="UTF-8")
+zling <- read.csv("~/statprakt/z_ling.csv", encoding="UTF-8")
 zling_points <- get_coords(zling$Geo_Data)
 
 zling_points <- data.frame(lat = as.numeric(zling_points$lat), lng = as.numeric(zling_points$lng))
@@ -215,35 +216,97 @@ ggplot(rom_types_tibble, aes(x, y, fill = bin_count, group = bin_count)) +
                           mean(width(rom_types_tibble$ybin))), drop = TRUE)
 
 # leftjoin the tibbles of inschriften and basistypen for every area
+# 
+# lj_rom <- left_join(rom_types_tibble, rom_insch_tibble, by = c("x" = "x", "y" = "y"))
+# # different levels 
+# fj_rom <- full_join(rom_types_tibble, rom_insch_tibble, by = c("x" = "x", "y" = "y"))
+# # different levels 
+# x1 <- unique(rom_types_tibble$x)
+# x2 <- unique(rom_types_tibble$y)
 
-lj_rom <- left_join(rom_types_tibble, rom_insch_tibble, by = c("x" = "x", "y" = "y"))
-# different levels 
-fj_rom <- full_join(rom_types_tibble, rom_insch_tibble, by = c("x" = "x", "y" = "y"))
-# different levels 
-x1 <- unique(rom_types_tibble$x)
-x2 <- unique(rom_types_tibble$y)
+# => make the tibbles from 2 class data, split into equal intervals, save counts of every class in 
+# each interval, calculate ratio of the classes in every interval, plot ratio on the maps. 
+# also correct for type of basetype => vorrom; lateinisch; etc. 
 
-# https://discuss.analyticsvidhya.com/t/how-to-merge-datasets-on-nearest-values-in-r/570
-# set the NAs to 0
-# calculate percentage point differences for every cell
-# make a map of the percentage point differences for all 3 areas
+sla_insch_data$class <- "insch"
+rom_insch_data$class <- "insch"
+ger_insch_data$class <- "insch"
+sla_types_data$class <- "types"
+rom_types_data$class <- "types"
+ger_types_data$class <- "types"
 
+sla_data <- rbind(sla_insch_data, sla_types_data)
+ger_data <- rbind(ger_insch_data, ger_types_data)
+rom_data <- rbind(rom_insch_data, rom_types_data)
 
+get_tibble_final <- function(data, ybreaks, xbreaks) {
+tibble <- data %>% 
+  mutate(xbin = cut(lng, breaks = 20),
+         ybin = cut(lat, breaks = 20)) %>% 
+  mutate(counts = 1) 
 
-
-
-test2 <- data %>% 
-  mutate(xbin = cut(x, breaks = 30),
-         ybin = cut(y, breaks = 30)) %>% 
+tibble_insch <- tibble %>% 
+  filter(class == "insch") %>% 
   group_by(xbin, ybin) %>% 
-  filter(class == "sampl") %>% 
-  mutate(count_sampl = n())
+  mutate(bin_count_insch = n())
 
-lj <- left_join(test, test2, by = c("xbin" = "xbin", "ybin" = "ybin"))
+tibble_insch <- tibble_insch[3:ncol(tibble_insch)]
+tibble_insch <- unique(tibble_insch)
 
-table(lj$count_insch)
+tibble_types <- tibble %>% 
+  filter(class == "types") %>% 
+  group_by(xbin, ybin) %>% 
+  mutate(bin_count_types = n())
 
-test$avg <- test$count_insch/nrow(test)
-ggplot(test, aes(x, y)) + geom_bin2d()
+tibble_types <- tibble_types[3:ncol(tibble_types)]
+tibble_types <- unique(tibble_types)
 
-ggplot(test2, aes(x, y, z = count_sampl)) + stat_summary_2d()
+fj <- full_join(tibble_insch, tibble_types, by = c("xbin" = "xbin", "ybin" = "ybin"))
+# joins correctly 
+
+fj$bin_count_insch <- tidyr::replace_na(fj$bin_count_insch, 0)
+fj$bin_count_types <- tidyr::replace_na(fj$bin_count_types, 0)
+
+fj$bin_ratio_insch <- (fj$bin_count_insch/sum(fj$bin_count_insch)) * 100
+fj$bin_ratio_types <- (fj$bin_count_types/sum(fj$bin_count_types)) * 100
+fj$bin_ratio_diffs <- fj$bin_ratio_types - fj$bin_ratio_insch
+
+# tibble <- tibble[3:ncol(tibble)]
+# tibble <- unique(tibble)
+
+fj$x <- midpoints(fj$xbin)
+fj$y <- midpoints(fj$ybin)
+# tibble$rel <- tibble$bin_count / sum(tibble$bin_count)
+
+fj
+}
+
+sla_fulljoin <- get_tibble_final(sla_data)
+sla_insch_tibble <- sla_fulljoin %>% filter(class.x == "insch")
+ggplot(sla_insch_tibble, aes(x, y, fill = bin_ratio_insch, group = bin_ratio_insch)) +
+  geom_bin2d(aes(group = bin_ratio_insch), 
+             binwidth = c(mean(width(sla_fulljoin$xbin)),
+                          mean(width(sla_fulljoin$ybin))), drop = TRUE) +
+  xlim(c(13.2, 15.75)) + 
+  ylim(c(45.85, 46.65))
+
+sla_types_tibble <- sla_fulljoin %>% filter(class.y == "types")
+ggplot(sla_types_tibble, aes(x, y, fill = bin_ratio_types, group = bin_ratio_types)) +
+  geom_bin2d(aes(group = bin_ratio_types), 
+             binwidth = c(mean(width(sla_fulljoin$xbin)),
+                          mean(width(sla_fulljoin$ybin))), drop = TRUE) +
+  xlim(c(13.2, 15.75)) + 
+  ylim(c(45.85, 46.65))
+
+ggplot(sla_fulljoin, aes(x, y, fill = bin_ratio_diffs, group = bin_ratio_diffs)) + 
+  geom_bin2d(aes(group = bin_ratio_diffs),
+             binwidth = c(mean(width(sla_fulljoin$xbin)),
+                          mean(width(sla_fulljoin$ybin))), drop = TRUE) +
+  xlim(c(13.2, 15.75)) + 
+  ylim(c(45.85, 46.65))
+
+# sort types by epoch
+# wrap everything into function
+# plot everything on corresponding maps
+# => areas as polygons
+# => consistent color scheme
