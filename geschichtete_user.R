@@ -134,5 +134,10 @@ table(subset_301_500$Hauptkategorie)
 #a <- 
 #barplot(table(data$))
 
+user <- c(beitrag_2_10, beitrag_11_40, beitrag_41_100, beitrag_101_200, beitrag_201_300, beitrag_301_500)
+milchv <- subset(crowd, crowd$Hauptkategorie == "Milchverarbeitung")
+viehh <- subset(crowd, crowd$Hauptkategorie == "Viehhaltung")
+allg <- subset(crowd, crowd$Hauptkategorie == " Allgemein")
+hauptkat <- c(milchv, viehh, allg)
 
-
+dataframe_hk <- data.frame(user, hauptkat, )
