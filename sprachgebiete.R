@@ -1,4 +1,4 @@
-sprachgebiete <- read.csv("~/statprakt/sprachgebiete.csv")
+sprachgebiete <- read.csv("sprachgebiete.csv")
 
 # gibt es regionen wo crowdsourcing dominanter ist als woanders
 # hat die lenkung funktioniert oder war es den leuten egal?
@@ -175,7 +175,7 @@ pnts_insch <- get_coords(inschriften$Geodaten)
 
 points <- data.frame(lat = as.numeric(pnts_insch$lat), lng = as.numeric(pnts_insch$lng))
 coordinates(points) <- ~ lng + lat
-crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+raster::crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
 l8r <- sp::over(points, gates)
 table(l8r)
