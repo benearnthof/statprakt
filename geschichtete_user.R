@@ -170,6 +170,6 @@ gestapelter_user <- ggplot(DF1, aes(x = Rank, y = value, fill = variable)) +
                    limits=c("1","2-10","11-40", "41-100", "101-200", "201-300","301-611")) +
   scale_fill_discrete(name = "Hauptkategorie") +
   theme_bw()+
-  ggtitle("Eintragungsverhalten der User")
+  ggtitle("Eintragungsverhalten der Nutzergruppen")
 ggsave("gestapelter_Barplot.png", plot = gestapelter_user, width = 18, height = 12, units = "cm")
   
