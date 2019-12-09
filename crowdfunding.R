@@ -48,7 +48,6 @@ hist(top20$Id_kategorie, breaks = 20)
 # okay lets take a look at the crowdsourcing data. 
 # columns erfasst am and Id_Informant contain valuable data. 
 require(magrittr)
-
 grouped <- crowd %>% dplyr::group_by(Id_Informant)
 
 require(stringr)
@@ -101,8 +100,8 @@ for (i in seq_along(pubdays)) {
 plot
 
 ende <- df[(nrow(df) - 120):nrow(df),]
-
-plot_ende <-  ggplot(ende, aes(x = days, y = freq)) + geom_bar(stat = "identity")for (i in seq_along(pubdays)) {
+plot_ende <-  ggplot(ende, aes(x = days, y = freq)) + geom_bar(stat = "identity")
+for (i in seq_along(pubdays)) {
   plot_ende <- plot_ende + 
     geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.5)
 }
@@ -291,7 +290,6 @@ empi <- ggplot(data = df, aes(x = Kumuliert, y = Personenkumuliert)) +
   xlab("Kumulierte relative Anteile: Einträge")
 
 ggsave("crowdsource_ecdf.png", plot = empi, width = 18, height = 12, units = "cm")  
-
 
 # Hauptkategorieplot
 require(reshape2)
