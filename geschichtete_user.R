@@ -145,19 +145,31 @@ table(subset_301_500$Hauptkategorie)
 
 #Plot erstelllen
 #Data frame erstllen
-group <- c("gruppe1", "gruppe2", "gruppe3", "gruppe4", "gruppe5", "gruppe6" )
-milch <- c("milch")
-vieh <- c("vieh")
-allgemein <- c("allgemein")
+group <- c(1,2,3,4,5,6,7)
 
+milch     <- c(79.12, 61.42, 52.59, 39.19, 28.45, 34.11, 20.34 )
+vieh      <- c(16.5, 25.25,31.29,41.52,43.3, 44.86,38.98)
+allgemein <- c(4.38, 13.33, 16.12, 19.29, 28.25, 21.03, 40.68 )
+crowd_kategorien <- data.frame(milch, vieh, allgemein)
 
-
-anzahl_Beitraege <- c(subset_1)
-Hauptkategorie <- c(milch, vieh, allgemein)
-user_gruppen <- c(subset_1)
-geschichtete_user <- data.frame(anzahl_Beitraege, Hauptkategorie, user_gruppen)
-
-geschichtete_user <- ggplot(geschichtete_user, aes(fill=user_gruppen, y=anzahl_Beitraege, x=Hauptkategorie)) + 
-  geom_bar(position="stack", stat="identity")
-
-
+DF <- read.table(text="Rank Milchverarbeitung     Viehhaltung     Allgemein
+1         79.12   16.50      4.38
+2-10      61.42   25.25     13.33
+11-40     52.59   31.29     16.12
+41-100    39.19   41.52     19.29
+101-200   28.45   43.30     28.25
+201-300   34.11   44.86     21.03
+301-611   20.34   38.98     40.68", header=TRUE)
+library(reshape2)
+DF1 <- melt(DF, id.var="Rank")
+library(ggplot2)
+ggplot(DF1, aes(x = Rank, y = value, fill = variable)) + 
+  geom_bar(stat = "identity") +
+  ylab("Anzahl der Eintragungen") +
+  scale_x_discrete(name ="User gruppiert nach Anzahl der Eintragungen", 
+                   limits=c("1","2-10","11-40", "41-100", "101-200", "201-300","301-611")) +
+  scale_fill_discrete(name = "Hauptkategorie") +
+  theme_bw()+
+  ggtitle("Eintragungsverhalten der User")
+ggsave("gestapelter_Barplot.png", plot = plot_2019, width = 18, height = 12, units = "cm")
+  
