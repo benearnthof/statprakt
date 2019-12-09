@@ -119,6 +119,7 @@ ger_insch <- readRDS(file = "ger_inschriften.RDS")
 rom_insch <- readRDS(file = "rom_inschriften.RDS")
 
 zling <- read.csv("~/statprakt/z_ling.csv", encoding="UTF-8")
+# here the partitioning is needed. ==== 
 zling_points <- get_coords(zling$Geo_Data)
 
 zling_points <- data.frame(lat = as.numeric(zling_points$lat), lng = as.numeric(zling_points$lng))
@@ -151,7 +152,7 @@ canvas_rom <- ggmap(map_rom)
 
 test <- broom::tidy(sla)
 canvas_sla +
-  geom_polygon(data = test, aes(x = long, y = lat), col = "red",fill = NA)
+  geom_polygon(data = broom::tidy(sla), aes(x = long, y = lat), col = "red",fill = NA)
 
 # make a map of the inschriften that fall into each area
 sla_insch_data <- as.data.frame.matrix(sla_insch@coords)
@@ -308,8 +309,79 @@ ggplot(sla_fulljoin, aes(x, y, fill = bin_ratio_diffs, group = bin_ratio_diffs))
   ylim(c(45.85, 46.65)) + 
   theme(legend.position = "none")
 
+# sla % diffs ====
+canvas_sla +
+  geom_bin2d(aes(x = x, y = y, group = bin_ratio_diffs, fill = bin_ratio_diffs), 
+             binwidth =c(mean(width(sla_fulljoin$xbin)),
+                         mean(width(sla_fulljoin$ybin))), drop = TRUE, data = sla_fulljoin) +
+  theme(legend.title = element_blank()) +
+  geom_polygon(data = broom::tidy(sla), aes(x = long, y = lat), col = "red",fill = NA) +
+  ggtitle("Prozentpunktdifferenz: Basistypen - Inschriften") +
+  scale_fill_continuous(limits = c(-15, 10), type = "viridis")
+
+# sla types ====
+canvas_sla +
+  geom_bin2d(aes(x = x, y = y, group = bin_ratio_types, fill = bin_ratio_types), 
+             binwidth =c(mean(width(sla_fulljoin$xbin)),
+                         mean(width(sla_fulljoin$ybin))), drop = TRUE, data = sla_types_tibble) +
+  theme(legend.title = element_blank()) +
+  geom_polygon(data = broom::tidy(sla), aes(x = long, y = lat), col = "red",fill = NA) +
+  ggtitle("Relative Anteile: Basistypen") +
+  scale_fill_continuous(limits = c(0, 15), type = "viridis")
+
+# sla insch ====
+canvas_sla +
+  geom_bin2d(aes(x = x, y = y, group = bin_ratio_insch, fill = bin_ratio_insch), 
+             binwidth =c(mean(width(sla_fulljoin$xbin)),
+                         mean(width(sla_fulljoin$ybin))), drop = TRUE, data = sla_insch_tibble) +
+  theme(legend.title = element_blank()) +
+  geom_polygon(data = broom::tidy(sla), aes(x = long, y = lat), col = "red",fill = NA) +
+  ggtitle("Relative Anteile: Inschriften") +
+  scale_fill_continuous(limits = c(0, 15), type = "viridis")
+
+plot_diffs <- function(fulljoin, canvas, polygon, color = "red") {
+  plt <- canvas +
+    geom_bin2d(aes(x = x, y = y, group = bin_ratio_diffs, fill = bin_ratio_diffs), 
+               binwidth =c(mean(width(fulljoin$xbin)),
+                           mean(width(fulljoin$ybin))), drop = TRUE, data = fulljoin) +
+    theme(legend.title = element_blank()) +
+    geom_polygon(data = broom::tidy(polygon), aes(x = long, y = lat), col = color, fill = NA) +
+    ggtitle("Prozentpunktdifferenz: Basistypen - Inschriften") +
+    scale_fill_continuous(limits = c(-15, 10), type = "viridis")
+  return(plt)
+}
+plot_diffs(sla_fulljoin, canvas_sla, sla, color = "lightblue") # seems to work
+
+plot_propo_types <- function(filtered, canvas, polygon, color = "red", fulljoin, ttl) {
+  plt <- canvas +
+    geom_bin2d(aes(x = x, y = y, group = bin_ratio_types, fill = bin_ratio_types), 
+               binwidth =c(mean(width(fulljoin$xbin)),
+                           mean(width(fulljoin$ybin))), drop = TRUE, data = filtered) +
+    theme(legend.title = element_blank()) +
+    geom_polygon(data = broom::tidy(polygon), aes(x = long, y = lat), col = color, fill = NA) +
+    ggtitle(paste0("Relative Anteile: ", ttl)) +
+    scale_fill_continuous(limits = c(0, 15), type = "viridis")
+  return(plt)
+}
+
+plot_propo_types(filtered = sla_types_tibble, canvas = canvas_sla, polygon = sla, color = "green",
+           fulljoin = sla_fulljoin, ttl = "Basistypen")
+
+plot_propo_insch <- function(filtered, canvas, polygon, color = "red", fulljoin, ttl) {
+  plt <- canvas +
+    geom_bin2d(aes(x = x, y = y, group = bin_ratio_insch, fill = bin_ratio_insch), 
+               binwidth =c(mean(width(fulljoin$xbin)),
+                           mean(width(fulljoin$ybin))), drop = TRUE, data = filtered) +
+    theme(legend.title = element_blank()) +
+    geom_polygon(data = broom::tidy(polygon), aes(x = long, y = lat), col = color, fill = NA) +
+    ggtitle(paste0("Relative Anteile: ", ttl)) +
+    scale_fill_continuous(limits = c(0, 15), type = "viridis")
+  return(plt)
+}
+plot_propo_insch(filtered = sla_insch_tibble, canvas = canvas_sla, polygon = sla, color = "green",
+                 fulljoin = sla_fulljoin, ttl = "Inschriften")
+
 # sort types by epoch
-# wrap everything into function
 # plot everything on corresponding maps
-# => areas as polygons
-# => consistent color scheme
+# add stacked barcharts for categories in crowdsourcing
+# add app to visualize the impact of extending the day range of publicity aktionen
