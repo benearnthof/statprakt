@@ -27,6 +27,7 @@ inschriften$Breite <- lat
 
 #map
 points <- data.frame(lat = as.numeric(lat), lng = as.numeric(lng))
+points <- distinct(points)
 coordinates(points) <- ~ lng + lat
 crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
@@ -45,3 +46,10 @@ crs(counts) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 mapview(counts)
 
 require(ggmap)
+
+
+canvas + geom_point(data = as.data.frame.matrix(points@coords), 
+                    aes(x = lng, y = lat), alpha = 0.5) +
+  geom_point(data = as.data.frame.matrix(tabula@coords),
+             aes(x = lng, y = lat), col = "red", size = 2)
+

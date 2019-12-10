@@ -1,4 +1,4 @@
-sprachgebiete <- read.csv("sprachgebiete.csv")
+sprachgebiete <- read.csv("~/statprakt/sprachgebiete.csv")
 
 # gibt es regionen wo crowdsourcing dominanter ist als woanders
 # hat die lenkung funktioniert oder war es den leuten egal?
@@ -168,14 +168,14 @@ plot(g8r)
 plot(raster::aggregate(g8r))
 
 gates <- raster::aggregate(g8r)
-raster::crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 saveRDS(gates, file = "alpenraum_polygon.RDS")
 # lets see what points fall into the area at all
 pnts_insch <- get_coords(inschriften$Geodaten)
 
 points <- data.frame(lat = as.numeric(pnts_insch$lat), lng = as.numeric(pnts_insch$lng))
 coordinates(points) <- ~ lng + lat
-raster::crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+crs(points) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
 l8r <- sp::over(points, gates)
 table(l8r)
@@ -195,11 +195,11 @@ ger <- list(two)
 sla <- list(tre)
 
 rom <- raster::aggregate(listaggreg8r(rom))
-raster::crs(rom) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+crs(rom) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 ger <- raster::aggregate(listaggreg8r(ger))
-raster::crs(ger) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+crs(ger) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 sla <- raster::aggregate(listaggreg8r(sla))
-raster::crs(sla) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+crs(sla) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 plot(rom)
 plot(ger)
 plot(sla)
