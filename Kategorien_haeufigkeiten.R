@@ -1,6 +1,6 @@
 # Häufigste Kategorien 
 # 20 verschiede Kategorien (davon aber 1x NA, 1x sonstiges)
-table(crowd01$Kategorie)
+table(crowd$Kategorie)
 # Häufigkeiten einzelner Hauptkategorien
 #Amphibien        Bäume      Blumen      Fische     Gebäude      Gefäße     Gelände 
 #29                 277          50           9        1786         928         298 
@@ -15,7 +15,7 @@ table(crowd01$Kategorie)
 
 library(reshape2)
 #Plot über absolute Häufigkeiten
-test2 <- melt(crowd01$Kategorie)
+test2 <- melt(crowd$Kategorie)
 plot_Kategorie <- melt(table(test2))
 abs.Kategorie <- ggplot(plot_Kategorie,aes(reorder(x = test2, -value), y = value)) + 
   geom_bar(stat = "identity", fill = "brown1", color = "black", alpha = 0.85) + 
@@ -33,7 +33,7 @@ mlt$relative <- round(mlt$relative, digits = 3)
 head(mlt$relative)
 
 #Plot mit relativen Häfigkeiten erstellen
-test2 <- melt(crowd01$Kategorie)
+test2 <- melt(crowd$Kategorie)
 plot_relative <- melt(table(test2))
 plot_relative$relative <- round(plot_relative$value/(sum(plot_relative$value)), digits = 3)
 
