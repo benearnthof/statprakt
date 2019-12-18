@@ -143,7 +143,7 @@ User <- data.frame(gruppe,milch, vieh, allgemein)
 User
 # Tabelle über User-Gruppen mit relativen Häufigkeiten bzgl. der Anzahl an Hauptkategorien
 # Als Gruppenname die Anzahl der Einträge definiert
-Gruppe    <-factor(c("=1", "2-10", "11-40", "41-100", "101-200", "201-300", ">301" ))
+Gruppe    <-factor(c("1", "2-10", "11-40", "41-100", "101-200", "201-300", ">301" ))
 Milchverarbeitung     <-c(79.12, 61.42, 52.59, 39.19, 28.45, 34.11, 20.34)
 Viehhaltung           <-c(16.5,  25.25, 31.29, 41.52, 43.30, 44.86, 38.98 )
 Allgemein             <-c(4.38,  13.33, 16.12, 19.29, 28.25, 21.03, 40.68 )
@@ -156,8 +156,9 @@ User1
 library(ggplot2)
 User_Gruppen <- ggplot(User1, aes(x = Gruppe, y = value, fill = variable)) + 
   geom_bar(position = "fill", stat = "identity") +
-  ggtitle("Verhalten der User") +
+  ggtitle("Eintragungsverhalten der User") +
   theme_bw()+
-  labs(x="User gruppiert nach Anzahl", y="Antein der Hauptkategorien in % ", fill = "Hauptkategorie")+
-  scale_x_discrete(limits=c("=1", "2-10", "11-40", "41-100", "101-200", "201-300", ">301" ))
+  labs(x="User gruppiert nach Anzahl der Eintragungen", y="Anteil der Eintragungen", fill = "Hauptkategorie")+
+  scale_x_discrete(limits=c("1", "2-10", "11-40", "41-100", "101-200", "201-300", ">301" ))
 User_Gruppen
+ggsave("geschichteter_User.png", plot =User_Gruppen , width = 16, height = 10, units = "cm")
