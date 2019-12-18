@@ -158,7 +158,8 @@ User_Gruppen <- ggplot(User1, aes(x = Gruppe, y = value, fill = variable)) +
   geom_bar(position = "fill", stat = "identity") +
   ggtitle("Eintragungsverhalten der User") +
   theme_bw()+
-  labs(x="User gruppiert nach Anzahl der Eintragungen", y="Anteil der Eintragungen", fill = "Hauptkategorie")+
-  scale_x_discrete(limits=c("1", "2-10", "11-40", "41-100", "101-200", "201-300", ">301" ))
+  labs(x="User gruppiert nach Anzahl der Eintragungen \n (Gruppengröße)", y="Anteil der Eintragungen", fill = "Hauptkategorie")+
+  scale_x_discrete(limits=c("1" , "2-10", "11-40", "41-100", "101-200", "201-300", ">301" ),
+                   labels=c("1 \n (313)", "2-10 \n (441)", "11-40 \n (213)", "41-100 \n (53)", "101-200 \n (18)", "201-300 \n (3)", ">301 \n (2)"))
 User_Gruppen
 ggsave("geschichteter_User.png", plot =User_Gruppen , width = 16, height = 10, units = "cm")
