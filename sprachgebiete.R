@@ -1,5 +1,5 @@
-sprachgebiete <- read.csv("~/statprakt/sprachgebiete.csv")
-
+sprachgebiete <- read.csv("sprachgebiete.csv")
+inschriften <- read.csv("inschriften.csv", encoding = "UTF-8")
 # gibt es regionen wo crowdsourcing dominanter ist als woanders
 # hat die lenkung funktioniert oder war es den leuten egal?
 # wo gibt es häufungen? 
@@ -13,6 +13,10 @@ sprachgebiete <- read.csv("~/statprakt/sprachgebiete.csv")
 library(sf)
 test <- sprachgebiete$Geodaten[7]
 # plot(test)
+
+# preprocessing der sprachgebietsdaten
+# die daten liegen als multipolygon vor => erzeuge fuer jedes gebiet eine liste 
+# aller polygone und packe diese listen dann als liste 
 
 test <- as.character(test)
 library(stringr)
@@ -49,16 +53,17 @@ map <- get_stamenmap(bbox = box, zoom = 6, maptype = "toner-lite")
 df <- as.data.frame.matrix(lst[[1]]@coords)
 df <- distinct(df)
 canvas <- ggmap(map)
+
 res1 <- canvas +
   geom_polygon(aes(x = lng, y = lat),
                data = df, color = "red", fill = "red")
 res1
-df <- as.data.frame.matrix(lst[[2]]@coords)
-df <- distinct(df)
-res <- res +
-  geom_polygon(aes(x = lng, y = lat),
-               data = df, color = "green", fill = "green",  inherit.aes = FALSE)
-res
+# df <- as.data.frame.matrix(lst[[2]]@coords)
+# df <- distinct(df)
+# res <- res +
+#   geom_polygon(aes(x = lng, y = lat),
+#                data = df, color = "green", fill = "green",  inherit.aes = FALSE)
+# res
 
 ggplot(data = df) +
   geom_polygon(aes(x = lng, y = lat), color = "red", fill = "red")
@@ -97,6 +102,10 @@ ggplot(data = df) +
 # saveRDS(listsix, "listsix.RDS")
 # saveRDS(listsev, "listsev.RDS")
 
+# sieben teilgebiete: 
+# drei hauptgebiete
+# drei ueberschneidungen von je zwei gebieten
+# eine ueberschneidung von den drei hauptgebieten
 one <- readRDS("listone.RDS")
 two <- readRDS("listtwo.RDS")
 tre <- readRDS("listtre.RDS")
@@ -105,9 +114,12 @@ fiv <- readRDS("listfiv.RDS")
 six <- readRDS("listsix.RDS")
 sev <- readRDS("listsev.RDS")
 
+# funktion um nested liste zu plotten
 mappr <- function(can = canvas) {
+  # farben 
   colors <- c("#e41a1c", "#377eb8", "#ffff33", "#ff00ff",
               "#4daf4a", "#ff7f00", "#000000")
+  # packe die listen aller teilgebiete in eine liste 
   areas <- list(one, two, tre, fou, fiv, six, sev)
   map <- can
   for (i in seq_along(areas)) {
@@ -124,6 +136,8 @@ mappr <- function(can = canvas) {
 
 test <- mappr()
 ggsave("sprachgebietsmap.png", plot = test, width = 16, height = 9, units = "cm")
+
+# aggregiere polygone fuer einfacheres handling
 dta <- distinct(as.data.frame.matrix(one[[1]]@coords))
 dta <- as.matrix.data.frame(dta)
 colnames(dta) <- c("x", "y")
@@ -141,10 +155,10 @@ plot(wot)
 agg <- raster::aggregate(wot)
 plot(agg)
 
-# wrapping stuff in functions is what i do best
+# alles in funktionen packen
 
 areas <- list(one, two, tre, fou, fiv, six, sev)
-# deriving empty polygon we can use as basis for rbind
+# erzeugen eines leeren polygons welches als basis fuer rbind verwendet werden kann
 tmp <- poly
 tmp@polygons <- list()
 
@@ -166,11 +180,24 @@ listaggreg8r <- function(areas) {
 g8r <- listaggreg8r(areas = areas)
 plot(g8r)
 plot(raster::aggregate(g8r))
+# raster::aggregate verbindet alle polygone zu einem großen polygon
 
 gates <- raster::aggregate(g8r)
 crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 saveRDS(gates, file = "alpenraum_polygon.RDS")
-# lets see what points fall into the area at all
+
+# => welche punkte fallen in welches teilgebiet?
+get_coords <- function(x) {
+  tmp <- as.character(x)
+  tmp <- sub("POINT", "", tmp)
+  tmp <- sub("\\(", "", tmp)
+  tmp <- sub("\\)", "", tmp)
+  list <- stringr::str_split(tmp, " ")
+  lng <- as.numeric(sapply(list, `[[`, 1))
+  lat <- as.numeric(sapply(list, `[[`, 2))
+  list(lng = lng, lat = lat)
+}
+
 pnts_insch <- get_coords(inschriften$Geodaten)
 
 points <- data.frame(lat = as.numeric(pnts_insch$lat), lng = as.numeric(pnts_insch$lng))
@@ -186,7 +213,7 @@ nrow(l8r_g8r@coords)
 plot(gates)
 plot(l8r_g8r, add = TRUE)
 
-saveRDS(l8r_g8r, file = "inschriften_in_alpenraum.RDS")
+# saveRDS(l8r_g8r, file = "inschriften_in_alpenraum.RDS")
 
 # inschriften in den einzelnen teilraeumen 
 
@@ -208,10 +235,10 @@ rom_points <- points[!is.na(over(points, rom)),]
 ger_points <- points[!is.na(over(points, ger)),]
 sla_points <- points[!is.na(over(points, sla)),]
 
-saveRDS(sla, file = "sla_polygon.RDS")
-saveRDS(ger, file = "ger_polygon.RDS")
-saveRDS(rom, file = "rom_polygon.RDS")
-
-saveRDS(sla_points, file = "sla_inschriften.RDS")
-saveRDS(ger_points, file = "ger_inschriften.RDS")
-saveRDS(rom_points, file = "rom_inschriften.RDS")
+# saveRDS(sla, file = "sla_polygon.RDS")
+# saveRDS(ger, file = "ger_polygon.RDS")
+# saveRDS(rom, file = "rom_polygon.RDS")
+# 
+# saveRDS(sla_points, file = "sla_inschriften.RDS")
+# saveRDS(ger_points, file = "ger_inschriften.RDS")
+# saveRDS(rom_points, file = "rom_inschriften.RDS")
