@@ -1,4 +1,5 @@
 # Alle User teilen wir nun in 7 Gruppen ein, nach ihrer Anzahl der Crowdsourcing- Einträge
+crowd <- read.csv("crowd01.csv", encoding = "UTF-8", sep = ",")
 ids <- table(crowd$Id_Informant)
 
 #1. Gruppe entspricht alle User die nur einen Eintrag geleistet haben
