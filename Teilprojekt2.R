@@ -1,4 +1,5 @@
 ## Erstellen des gesamten Alpenraums als ein Polygon
+source("Teilmengen_z_ling.R")
 library("dplyr")
 library("raster")
 library("sp")
@@ -11,6 +12,14 @@ fou <- readRDS("listfor.RDS")
 fiv <- readRDS("listfiv.RDS")
 six <- readRDS("listsix.RDS")
 sev <- readRDS("listsev.RDS")
+
+sp_crowd <- readRDS(file = "sp_crowd.RDS")
+box <- sp_crowd@bbox
+box[2,] <- c(44, 49)
+box[,1] <- c(4.5, 43.3)
+box[,2] <- c(16.5, 48.5)
+map <- get_stamenmap(bbox = box, zoom = 6, maptype = "toner-lite") 
+canvas <- ggmap(map)
 
 mappr <- function(can = canvas) {
   colors <- c("#e41a1c", "#377eb8", "#ffff33", "#ff00ff",
@@ -50,10 +59,10 @@ agg <- raster::aggregate(wot)
 
 plot(agg)
 
-# wrapping stuff in functions is what i do best
+# alles in funktionen packen
 
 areas <- list(one, two, tre, fou, fiv, six, sev)
-# deriving empty polygon we can use as basis for rbind
+# leeres polygon fuer rbind
 tmp <- poly
 tmp@polygons <- list()
 
@@ -88,6 +97,18 @@ crs(gates) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 # da wir zuvor eine Teilmenge von z_ling gemacht haben mit Berücksichtigung 
 # der Alpenkonvention)
 # aber als Sicherheit trz nicht ein unbedingt unnötiger Schritt
+
+get_coords <- function(x) {
+  tmp <- as.character(x)
+  tmp <- sub("POINT", "", tmp)
+  tmp <- sub("\\(", "", tmp)
+  tmp <- sub("\\)", "", tmp)
+  list <- stringr::str_split(tmp, " ")
+  lng <- as.numeric(sapply(list, `[[`, 1))
+  lat <- as.numeric(sapply(list, `[[`, 2))
+  list(lng = lng, lat = lat)
+}
+
 pnts_rom_lat <- get_coords(rom_lat_alp$Geo_Data)
 
 points_rom_lat <- data.frame(lat = as.numeric(pnts_rom_lat$lat), 
@@ -98,7 +119,7 @@ crs(points_rom_lat) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs8
 
 l8r_rom_lat <- sp::over(points_rom_lat, gates)
 
-table(l8r)
+# table(l8r)
 
 l8r_g8r_rom_lat <- points_rom_lat[!is.na(over(points_rom_lat, gates)),]
 nrow(l8r_g8r_rom_lat@coords)
@@ -138,7 +159,7 @@ crs(points_rom_vor) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs8
 
 l8r_rom_vor <- sp::over(points_rom_vor, gates)
 
-table(l8r)
+# table(l8r)
 
 l8r_g8r_rom_vor <- points_rom_vor[!is.na(over(points_rom_vor, gates)),]
 nrow(l8r_g8r_rom_vor@coords)

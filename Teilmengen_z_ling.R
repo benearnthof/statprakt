@@ -1,3 +1,4 @@
+z_ling <- read.csv("z_ling.csv", encoding = "UTF-8")
 #Duplikate der Sprachbelege entfernen
 z_ling2 <- z_ling[!duplicated(z_ling$Id_Instance),]
 
