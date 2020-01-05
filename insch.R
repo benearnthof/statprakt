@@ -1,5 +1,6 @@
 # inschriften: step 1: Betrachten der Daten
-tab <- read.csv("~/statprakt/tabula.csv", encoding="UTF-8")
+# dieses file ist nur als ueberblick gedacht. 
+tab <- read.csv("tabula.csv", encoding="UTF-8")
 head(tab)
 
 library("raster")
@@ -29,7 +30,7 @@ names(crds) <- c("lng", "lat")
 coordinates(crds) <-  ~ lng + lat
 plot(crds)
 
-inschriften <- read.csv("~/statprakt/inschriften.csv", encoding = "UTF-8")
+inschriften <- read.csv("inschriften.csv", encoding = "UTF-8")
 head(inschriften)
 
 insch_coords <- get_coords(inschriften$Geodaten)
