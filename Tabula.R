@@ -3,6 +3,7 @@ require(raster)
 require(sp)
 require(mapview)
 
+tabula <- read.csv("tabula.csv", encoding = "UTF-8")
 tabula <- tabula[1:(nrow(tabula) - 1),]
 
 # x<- tabula$Geodaten
@@ -54,5 +55,8 @@ box[,2] <- c(16.5, 48.5)
 map <- get_stamenmap(bbox = box, zoom = 6, maptype = "toner-lite") 
 canvas <- ggmap(map)
 
+gates <- readRDS(file = "alpenraum_polygon.RDS")
+
 canvas + geom_point(data = as.data.frame.matrix(tabula@coords), aes(x = lng, y = lat)) +
   geom_polygon(data = broom::tidy(gates), aes(x = long, y = lat), col = "red",fill = NA)
+# verwende unique points um polygon korrekt zu plotten. 
