@@ -18,7 +18,7 @@ plot(index ~ test)
 # der groesse nach angeordneter plot
 ggplot(crowd,
        aes(x = reorder(Kategorie,Kategorie,
-                       function(x)-length(x)))) +
+                     function(x)-length(x)))) +
   geom_bar()
 
 typisiert <- read.csv("typisiert.csv", encoding = "UTF-8")
@@ -65,7 +65,7 @@ require(ggplot2)
 ggplot(table, aes(x = days, y = Freq)) + geom_bar(stat = "identity") +
   geom_vline(xintercept = 221, col = "red", alpha = 0.5)
 
-# horizontale linien koennen im plot an gewuensten tagen hinzugefuegt werden
+# horizontale linien koennen im plot an gewuenschten tagen hinzugefuegt werden
 
 # 2001 scheint ausreisser zu sein
 publicity <- read.csv("publicity.csv", encoding = "UTF-8")
@@ -98,7 +98,7 @@ plot <- ggplot(df, aes(x = days, y = freq)) + geom_bar(stat = "identity")
 
 for (i in seq_along(pubdays)) {
   plot <- plot + 
-    geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.5)
+  geom_vline(xintercept = as.Date(pubdays[i]), col = "blue", alpha = 0.5)
 }
 plot
 
@@ -169,15 +169,15 @@ plt_publicity <- function(df, days, year, size = 2, dayofinterest = NULL) {
     z = rep(0, times = length(days))
   )
   if (!is.null(dayofinterest)) {
-    segment_data$z[segment_data$x %in% as.Date(dayofinterest)] <- 1
+  segment_data$z[segment_data$x %in% as.Date(dayofinterest)] <- 1
   }
   # fuege die segmente dem plot hinzu
   if (!is.null(dayofinterest)) {
     plt <- plt + geom_segment(data = segment_data, 
-                              aes(x = x, y = y, xend = xend, yend = yend, color = z), 
-                              alpha = 0.75, size = size) + 
-      scale_color_gradientn(colours = c("#ff5500","#0050ff")) + 
-      theme(legend.position = "none")
+                            aes(x = x, y = y, xend = xend, yend = yend, color = z), 
+                            alpha = 0.75, size = size) + 
+    scale_color_gradientn(colours = c("#ff5500","#0050ff")) + 
+    theme(legend.position = "none")
   } else {
     plt <- plt + geom_segment(data = segment_data,
                               aes(x = x, y = y, xend = xend, yend = yend),
@@ -269,7 +269,7 @@ lorenz <- data.frame(x = wot$p, y = wot$L)
 empi <- ggplot(data = df, aes(x = Kumuliert, y = Personenkumuliert)) +
   geom_step(size = 1.5) +
   scale_x_continuous(limits = c(0, 1), breaks = c(0, 0.25, 0.5, round(df$Kumuliert[53], digits = 2), 
-                                                  0.75, 1)) +
+                                       0.75, 1)) +
   scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.25, 0.5, 0.75, 0.95, 1)) +
   theme_bw() +
   geom_hline(yintercept = 0.95, color = "red") +
@@ -420,10 +420,10 @@ userdata1 <- powerdata[powerdata$Id_Informant == poweruser[1],]
 
 # funktion um dates und times aufzuteilen
 get_datestimes <- function(x) {
-  list <- stringr::str_split(x, " ")
-  dates <- as.character(sapply(list, `[[`, 1))
-  times <- as.character(sapply(list, `[[`, 2))
-  list(dates = dates, times = times)
+    list <- stringr::str_split(x, " ")
+    dates <- as.character(sapply(list, `[[`, 1))
+    times <- as.character(sapply(list, `[[`, 2))
+    list(dates = dates, times = times)
 }
 powerdates <- get_datestimes(powerdata$Erfasst_Am)[1]
 sort(table(powerdates), decreasing = TRUE)
@@ -524,7 +524,7 @@ final <- crowd[crowd$day %in% top10$dates,]
 
 top10map <- ggmap(map) +
   geom_count(aes(x = lng, y = lat), color = "red", alpha = 0.5, data = final)
-
+  
 top10map
 
 # crowd muss lon & lat spalten haben
@@ -541,7 +541,7 @@ get_topxmap <- function(top = 1, dta = top10, mp = map, range = 1) {
   li <- list()
   for (i in seq_len(range)) {
     # range 1 => nur am tag der aktion; range 2 => tag der aktion + folgetag etc
-    li[[i]] <- crowd[crowd$day %in% (topx$dates + i - 1),]
+  li[[i]] <- crowd[crowd$day %in% (topx$dates + i - 1),]
   }
   final <- dplyr::bind_rows(li)
   
@@ -566,10 +566,10 @@ for (i in 1:10) {
 #plot für alle Aktionen über 2 Tage für alle 43 Aktionen
 top_all <- dfpubresults[order(dfpubresults$pubresults, decreasing = TRUE),][1:43,]
 top_all$title <- c("Dialekt Themenwoche im BR (27.04.2018)", "Artikel auf rosenheim 24.de (19.06.2018)", "Beitrag auf Facebookseite Servizio Minoranze (09.08.2019)", 
-                   "Artikel auf zalp.ch (27.03.2017)", "Artikel auf lmu.de (15.05.2017)", "Bericht auf brennerbasisdemokratie.eu (30.07.2019)", 
-                   "Interview BR (11.04.2017)", "Interview ORF (20.05.2017)", "Beitrag auf ddolomiti.eu (08.08.2019)", "Facebook Promovideo (14.03.2017)", " Beitrag in der Facebook-Gruppe 'Solo alpeggio' (05.12.2017)", "Beitrag auf Facebook 'beste Gemeinde' (16.05.2017)", "Facebook: 3000 Belege (30.03.2017)", "Artikeln in 'der Bote' (23.05.2017)", "Facebook: 4000 Belege (13.05.2017)", "offizieller Start Crowdsourcing (Facebook-Post) (10.02.2017)", "Artikel im 'il Gazzettino di Belluno' (04.08.2019)", "www.milchhandwerk.info (04.04.2017)", "Facebook: neuer Flyer (20.04.2017)", "Flyer-Verteilung in Colle S. Lucia (24.08.2019)", "VerbaAlpina Champion 2/17 (28.02.2017)", "Vortrag Bayerischer Almbauerntag (07.10.2017)", "Post auf Reddit.com/austria (20.06.2018)", "Artikel auf bergwelten.com (17.03.2017)", 
-                   "VerbaAlpina Champion 3/17 (01.04.2017)", "Bayern2 'Tagesgespräch' (21.02.2019)", "VerbaAlpina Champion 4/17 (01.05.2017)", "Post auf Reddit.com/france und Reddit.com/schweiz (02.07.2018)", "Vorschau auf lausc.it (23.07.2019)", "Artikel in der La Usc di Ladins (26.07.2019)", "Beitrag in der Facebook-Gruppe 'Allevatori italiani' (04.12.2017)", " Vortrag beim Almlehrkurs in Bad Feilnbach (16.02.2018)", " Interview Radio Regenbogen (10.06.2018)", " Facebook: Weihnachtsgruß (19.12.2016)", "Facebook: französischer Spitzenreiter (29.06.2017)", "Vortrag in Sils-Maria (27.12.2017)", "Artikel in 'Anzeiger von Saanen' (23.02.2018)", 
-                   "Artikel Zeitschrift Tegernseer Tal (25.09.2018)", "Artikel auf tourentipp.de (23.10.2018)", " Artikel im Corriere delle Alpi (24.07.2019)", " Flyer-Verteilung im Rosengarten/Catinaccio (02.08.2019)", "Artikel im L'Adige - Quotidiano indipendente del Trentino Alto Adige (23.08.2019)", " Flyer-Verteilung bei Poetry Slam St. Ulrich in Gröden (31.08.2019)")
+                    "Artikel auf zalp.ch (27.03.2017)", "Artikel auf lmu.de (15.05.2017)", "Bericht auf brennerbasisdemokratie.eu (30.07.2019)", 
+                    "Interview BR (11.04.2017)", "Interview ORF (20.05.2017)", "Beitrag auf ddolomiti.eu (08.08.2019)", "Facebook Promovideo (14.03.2017)", " Beitrag in der Facebook-Gruppe 'Solo alpeggio' (05.12.2017)", "Beitrag auf Facebook 'beste Gemeinde' (16.05.2017)", "Facebook: 3000 Belege (30.03.2017)", "Artikeln in 'der Bote' (23.05.2017)", "Facebook: 4000 Belege (13.05.2017)", "offizieller Start Crowdsourcing (Facebook-Post) (10.02.2017)", "Artikel im 'il Gazzettino di Belluno' (04.08.2019)", "www.milchhandwerk.info (04.04.2017)", "Facebook: neuer Flyer (20.04.2017)", "Flyer-Verteilung in Colle S. Lucia (24.08.2019)", "VerbaAlpina Champion 2/17 (28.02.2017)", "Vortrag Bayerischer Almbauerntag (07.10.2017)", "Post auf Reddit.com/austria (20.06.2018)", "Artikel auf bergwelten.com (17.03.2017)", 
+                    "VerbaAlpina Champion 3/17 (01.04.2017)", "Bayern2 'Tagesgespräch' (21.02.2019)", "VerbaAlpina Champion 4/17 (01.05.2017)", "Post auf Reddit.com/france und Reddit.com/schweiz (02.07.2018)", "Vorschau auf lausc.it (23.07.2019)", "Artikel in der La Usc di Ladins (26.07.2019)", "Beitrag in der Facebook-Gruppe 'Allevatori italiani' (04.12.2017)", " Vortrag beim Almlehrkurs in Bad Feilnbach (16.02.2018)", " Interview Radio Regenbogen (10.06.2018)", " Facebook: Weihnachtsgruß (19.12.2016)", "Facebook: französischer Spitzenreiter (29.06.2017)", "Vortrag in Sils-Maria (27.12.2017)", "Artikel in 'Anzeiger von Saanen' (23.02.2018)", 
+                    "Artikel Zeitschrift Tegernseer Tal (25.09.2018)", "Artikel auf tourentipp.de (23.10.2018)", " Artikel im Corriere delle Alpi (24.07.2019)", " Flyer-Verteilung im Rosengarten/Catinaccio (02.08.2019)", "Artikel im L'Adige - Quotidiano indipendente del Trentino Alto Adige (23.08.2019)", " Flyer-Verteilung bei Poetry Slam St. Ulrich in Gröden (31.08.2019)")
 # auskommentieren um es auszufuehren
 # for (i in 1:43) {
 #   tmp <- get_topxmap(top = i, range = 2)
