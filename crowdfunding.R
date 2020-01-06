@@ -65,7 +65,7 @@ require(ggplot2)
 ggplot(table, aes(x = days, y = Freq)) + geom_bar(stat = "identity") +
   geom_vline(xintercept = 221, col = "red", alpha = 0.5)
 
-# horizontale linien koennen im plot an gewuensten tagen hinzugefuegt werden
+# horizontale linien koennen im plot an gewuenschten tagen hinzugefuegt werden
 
 # 2001 scheint ausreisser zu sein
 publicity <- read.csv("publicity.csv", encoding = "UTF-8")
