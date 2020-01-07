@@ -164,3 +164,4 @@ User_Gruppen <- ggplot(User1, aes(x = Gruppe, y = value, fill = variable)) +
                    labels=c("1 \n (313)", "2-10 \n (441)", "11-40 \n (213)", "41-100 \n (53)", "101-200 \n (18)", "201-300 \n (3)", ">301 \n (2)"))
 User_Gruppen
 ggsave("geschichteter_User.png", plot =User_Gruppen , width = 16, height = 10, units = "cm")
+
