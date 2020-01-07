@@ -122,6 +122,7 @@ dimnames(beitrag_301_500)
 index_301_500 <- as.numeric(dimnames(beitrag_301_500)[[1]])
 subset_301_500 <-crowd[crowd$Id_Informant %in% index_301_500, ]
 nrow(subset_301_500)
+
 # Anzahl Belege gesamt: 1027
 filter_subset_301_500 <- subset_301_500[!duplicated(subset_301_500$Id_Informant),]
 # User Anzahl: 2
@@ -142,6 +143,7 @@ vieh      <-c(49,  460,  1083, 1083, 650, 192, 207 )
 allgemein <-c(13,  243,  558,   503, 424,  90, 216 )
 User <- data.frame(gruppe,milch, vieh, allgemein)
 User
+
 # Tabelle über User-Gruppen mit relativen Häufigkeiten bzgl. der Anzahl an Hauptkategorien
 # Als Gruppenname die Anzahl der Einträge definiert
 Gruppe    <-factor(c("1", "2-10", "11-40", "41-100", "101-200", "201-300", ">301" ))
@@ -163,5 +165,5 @@ User_Gruppen <- ggplot(User1, aes(x = Gruppe, y = value, fill = variable)) +
   scale_x_discrete(limits=c("1" , "2-10", "11-40", "41-100", "101-200", "201-300", ">301" ),
                    labels=c("1 \n (313)", "2-10 \n (441)", "11-40 \n (213)", "41-100 \n (53)", "101-200 \n (18)", "201-300 \n (3)", ">301 \n (2)"))
 User_Gruppen
-ggsave("geschichteter_User.png", plot =User_Gruppen , width = 16, height = 10, units = "cm")
+ggsave("geschichteter_User.png", plot =User_Gruppen , width = 17, height = 10, units = "cm")
 
