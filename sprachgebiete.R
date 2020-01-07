@@ -120,6 +120,7 @@ mappr <- function(can = canvas) {
   colors <- c("#e41a1c", "#377eb8", "#ffff33", "#ff00ff",
               "#4daf4a", "#ff7f00", "#000000")
   # packe die listen aller teilgebiete in eine liste 
+  library("dplyr")
   areas <- list(one, two, tre, fou, fiv, six, sev)
   map <- can
   for (i in seq_along(areas)) {
