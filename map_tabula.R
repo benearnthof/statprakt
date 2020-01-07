@@ -1,19 +1,15 @@
 # Map über Tabula
 
 library("ggmap")
-<<<<<<< HEAD
-tabula <- read.csv("tabula.csv", encoding = "UTF-8")
-=======
 library("raster")
 tabula <- read.csv("tabula.csv", encoding = "UTF-8")
 tabula <- tabula[1:(nrow(tabula) - 1),]
 
->>>>>>> 3c87a4824c675a578a61131bbdec44b977cca829
 x <- tabula$Geodaten
 dta <- x[-length(x)]
 
 get_coords <- function(x) {
-
+  
   
   tmp <- as.character(x)
   tmp <- sub("POINT", "", tmp)
@@ -49,29 +45,46 @@ df_insch <- insch_crds
 #Map über Inschriften erstellen
 
 inschriften_map <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 42, 
-                                      right = 20, top = 50), zoom = 7, maptype = "toner"))
+                                                right = 20, top = 50), zoom = 6, maptype = "toner-lite"))
 
-<<<<<<< HEAD
-i <-insch + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35)+
-=======
 inschriften_map <- inschriften_map + 
   stat_bin2d(mapping = aes(x = lng , y = lat), data = df_insch, bins = 100) +
   scale_fill_gradient(low ="darkseagreen", high = "darkblue", limits = c(0,300) ) +
->>>>>>> 3c87a4824c675a578a61131bbdec44b977cca829
   ggtitle("Fundorte von lat. Inschriften")
+inschriften_map
+# Gleiches nochmal mit geom_point 
 
+inschriften_map_geom <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 42, 
+                                                     right = 20, top = 50), zoom = 6, maptype = "toner-lite"))
+
+inschriften_map_geom <-inschriften_map_geom + 
+  geom_point(aes(x = lng , y = lat), data = df_insch, color ="dodgerblue4", alpha = 0.5)+
+  ggtitle("Fundorte von lat. Inschriften")
+inschriften_map_geom
 # Grafik erstellen zu Inschriften
-# ggsave("Inschriften_Map.png", plot =i , width = 16, height = 10, units = "cm")
+#ggsave("Inschriften_map_geom.png", plot =i , width = 16, height = 10, units = "cm")
 
+#Inschriften Map (eingegränzter Bereich)
+
+eingegrenzt_df_insch <- subset(df_insch, lng >= 8.00)
+eingegrenzt_df_insch <- subset(eingegrenzt_df_insch, lat <= 49)
+inschriften_map_eingegrenzt <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 42, 
+                                                            right = 20, top = 50), zoom = 6, maptype = "toner-lite"))
+
+inschriften_map_eingegrenzt <-inschriften_map_eingegrenzt + 
+  stat_bin2d(mapping = aes(x = lng , y = lat), data = eingegrenzt_df_insch, bins = 100, alpha = 0,7)+
+  scale_fill_gradient(low ="darkseagreen", high = "darkblue", limits = c(0,300) ) +
+  ggtitle("Fundorte von lat. Inschriften")
+inschriften_map_eingegrenzt
 
 # Map: Tabula und Inschriften 
 i_tabula <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 42, 
                                          right = 20, top = 50), zoom = 6, maptype = "toner-lite"))
 i_tabula <- i_tabula + geom_point(aes(x = lng , y = lat, colour = "Inschriften"), data = df_insch, alpha = 0.35)   
 i_tabula <- i_tabula + geom_point(aes(x = lng , y = lat, colour = "Tabula"), data = coords_tabula, alpha = 1, size = 2) +
-            scale_colour_manual(name="Legende",
-                                values=c(Tabula="#ff7f00", Inschriften="#377eb8"))+
-            ggtitle("Vergleich: Inschriftenfunde und Tabula Peutingeriana")
+  scale_colour_manual(name="Legende",
+                      values=c(Tabula="#ff7f00", Inschriften="#377eb8"))+
+  ggtitle("Vergleich: Inschriftenfunde und Tabula Peutingeriana")
 
 # Grafik zur Map mit Tabule Orten und Inschriften
 # Mit scale_colour_manual die Legende manuel hinzufügen 
@@ -83,19 +96,34 @@ insch2 <- ggmap(get_stamenmap(bbox = c(left = 7.5, bottom = 43,
                                        right = 20, top = 49), zoom = 6, maptype = "toner-lite"))
 insch2 <- insch2 + geom_point(aes(x = lng , y = lat, colour = "Inschriften"), data = df_insch, alpha = 0.35)
 insch2 <- insch2 + geom_point(aes(x = lng , y = lat, colour = "Tabula"), data = coords_tabula, alpha = 1, size = 2) +
-          scale_colour_manual(name="Legende",
-                              values=c(Tabula="#ff7f00", Inschriften="#377eb8"))+
-          ggtitle("Vergleich: Inschriftenfunde und Tabula Peutingeriana") 
- 
+  scale_colour_manual(name="Legende",
+                      values=c(Tabula="#ff7f00", Inschriften="#377eb8"))+
+  ggtitle("Vergleich: Inschriftenfunde und Tabula Peutingeriana") 
+
 
 ggsave("Zoom_Inschriften_Tabula_Map.png", plot =insch2 , width = 16, height = 10, units = "cm")
 
+# Tabula Map mit geom_point
+#Funktioniert nicht :/
+df_tabula <- as.data.frame(table(tabula@data$Geodaten))
+coords_tabula <- get_coords(df_tabula$Var1)
+df_tabula$lng <- coords_tabula$lng
+df_tabula$lat <- coords_tabula$lat
+sp_tabula <- df_tabula
+
+map_tabula <- get_stamenmap(bbox = c(left = 1, bottom = 42, 
+                                     right = 20, top = 50), zoom = 6, maptype = "toner-lite") 
+
+plot_tabula <- ggmap(map_tabula) + 
+  geom_point(mapping = aes(x = lng, y = lat), data = sp_tabula)
+
+plot_tabula
+
 # noch von interesse: Wie viele der Umgebungen der Punkte der Tabula enthalten 
 # Punkte der Inschriftenfunde? Wenn ja, in welchen Radien um die Straßenpunkte 
-# ist dies der Fall?
+# ist dies der Fall??
 
 # inschriften aus teilmengen_nicht_rom
-library("ggplot2")
 distinct_inschriften <- readRDS("distinct_inschriften.RDS")
 coordinates(distinct_inschriften) <- ~ lng + lat
 # sampling with buffer
@@ -124,8 +152,6 @@ bufferzone_counter <- function(distance = 100, centerpoints = tabula, points = d
   tbl
 }
 
-library("sp")
-library("rgdal")
 test <- bufferzone_counter()
 sort(test)
 test <- bufferzone_counter(2500)
@@ -183,9 +209,10 @@ map <- insch + geom_point(data = data, aes(x = lng, y = lat, size = Group),
   ggtitle("Testtitle") +
   labs(size = "test") +
   scale_size(range = c(2, 6))
-  
-  
+
+
 map
+
 
 # wrap everything in function
 plt_tabulamap <- function(augment_res, canvas = insch, title = "Testtitle", round = TRUE) {
