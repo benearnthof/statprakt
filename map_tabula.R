@@ -1,7 +1,14 @@
 # Map über Tabula
 
 library("ggmap")
+<<<<<<< HEAD
 tabula <- read.csv("tabula.csv", encoding = "UTF-8")
+=======
+library("raster")
+tabula <- read.csv("tabula.csv", encoding = "UTF-8")
+tabula <- tabula[1:(nrow(tabula) - 1),]
+
+>>>>>>> 3c87a4824c675a578a61131bbdec44b977cca829
 x <- tabula$Geodaten
 dta <- x[-length(x)]
 
@@ -29,13 +36,28 @@ coordinates(tabula) <- ~ lng + lat
 
 coords_tabula <- as.data.frame.matrix(tabula@coords)
 
+inschriften <- read.csv("inschriften.csv", encoding = "UTF-8")
+head(inschriften)
 
+
+insch_coords <- get_coords(inschriften$Geodaten)
+
+insch_crds <- data.frame(lng = insch_coords[[1]], lat = insch_coords[[2]])
+names(insch_crds) <- c("lng", "lat")
+
+df_insch <- insch_crds
 #Map über Inschriften erstellen
 
 inschriften_map <- ggmap(get_stamenmap(bbox = c(left = 1, bottom = 42, 
                                       right = 20, top = 50), zoom = 7, maptype = "toner"))
 
+<<<<<<< HEAD
 i <-insch + geom_point(aes(x = lng , y = lat), colour = "#377eb8", data = df_insch, alpha = 0.35)+
+=======
+inschriften_map <- inschriften_map + 
+  stat_bin2d(mapping = aes(x = lng , y = lat), data = df_insch, bins = 100) +
+  scale_fill_gradient(low ="darkseagreen", high = "darkblue", limits = c(0,300) ) +
+>>>>>>> 3c87a4824c675a578a61131bbdec44b977cca829
   ggtitle("Fundorte von lat. Inschriften")
 
 # Grafik erstellen zu Inschriften
