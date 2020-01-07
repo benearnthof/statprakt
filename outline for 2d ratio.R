@@ -1,8 +1,12 @@
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(raster)
+library(sp)
+library(sf)
 
-employee <- employee <- c('John','Dave','Paul','Ringo','George','Tom','Jim','Harry','Jamie','Adrian')
+# beispiel fuer binned counts & ratios von stackexchange
+employee <- c('John','Dave','Paul','Ringo','George','Tom','Jim','Harry','Jamie','Adrian')
 quality <- c('good', 'bad')
 x = runif(4000,0,100)
 y = runif(4000,0,100)
@@ -23,16 +27,19 @@ ggplot(df, aes(x, y, fill = bin_quality, group = bin_quality)) +
   geom_bin2d(aes(group = bin_quality), binwidth = c(20, 20), drop = TRUE) +
   scale_fill_gradient2(low="darkred", high = "darkgreen") 
 
-# wir haben koordinaten punkte für inschriften & basistypen
+# wir haben koordinaten punkte fuer inschriften & basistypen
 # => xbin cut
 # => ybin cut
 # overall_avg = mean(class)
-# 
+
+# import inschriftendaten 
 l8r_g8r <- readRDS("inschriften_in_alpenraum.RDS")
 insch.data <- l8r_g8r
 
+# import alpenraum polygon
 gates <- readRDS("alpenraum_polygon.RDS")
 
+# proof of concept mit einer stichprobe von 500 daten
 sample <- spsample(gates, 500, type = "random")
 extent(insch.data)
 extent(gates)
@@ -44,6 +51,7 @@ sampl.data$class <- "sampl"
 names(insch.data) <- names(sampl.data)
 data <- rbind(insch.data, sampl.data)
 
+# alles in ein data frame um es mit ggplot visualisieren zu koennen
 df <- data %>% 
   mutate(xbin = cut(x, breaks = 100),
          ybin = cut(y, breaks = 100), 
@@ -57,6 +65,7 @@ ggplot(df, aes(x, y, z = bin_quality)) + stat_summary_2d()
 plot(sample)
 # scheint zu funktionieren wie geplant
 
+# 
 dta <- data[data$class == "insch",]
 test <- data %>% 
   mutate(xbin = cut(x, breaks = 30),
@@ -76,6 +85,10 @@ tibble <- data[data$class == "insch",] %>%
 
 tibble <- tibble[3:ncol(tibble)]
 tibble <- unique(tibble)
+
+# problem: die bins sind nicht gleich gross fuer beide datensaetze
+# loesung: finde mittelpunkte und breite der rechtecke und verwende diese als 
+# binwidth in ggplots 
 
 # funktion um mittelpunkte der rechtecke zu finden
 midpoints <- function(x, dp=2){
@@ -100,6 +113,7 @@ width <- function(x) {
 mean(width(tibble$xbin)) # 0.4
 mean(width(tibble$ybin)) # 0.2
 
+# binwidth um konsistente ergebnisse zu erhalten
 ggplot(tibble, aes(x, y, fill = bin_count, group = bin_count)) +
   geom_bin2d(aes(group = bin_count), binwidth = c(0.4, 0.2), drop = TRUE)
 
@@ -151,6 +165,7 @@ canvas_sla +
   geom_polygon(data = broom::tidy(sla), aes(x = long, y = lat), col = "red",fill = NA)
 
 # karten der inschriften die in die jeweiligen gebiete fallen
+# step 1: umkonvertieren der koordinatenmatrizen in data frames
 sla_insch_data <- as.data.frame.matrix(sla_insch@coords)
 rom_vor_insch_data <- as.data.frame.matrix(rom_insch@coords)
 rom_lat_insch_data <- as.data.frame.matrix(rom_insch@coords)
@@ -230,6 +245,7 @@ ger_types_data <- as.data.frame.matrix(ger_points@coords)
 # each interval, calculate ratio of the classes in every interval, plot ratio on the maps. 
 # also correct for type of basetype => vorrom; lateinisch; etc. 
 
+# step 2: klassen zuweisen 
 sla_insch_data$class <- "insch"
 rom_vor_insch_data$class <- "insch"
 rom_lat_insch_data$class <- "insch"
@@ -240,11 +256,13 @@ rom_vor_types_data$class <- "types"
 rom_lat_types_data$class <- "types"
 ger_types_data$class <- "types"
 
+# step 3: alles in data frames packen 
 sla_data <- rbind(sla_insch_data, sla_types_data)
 ger_data <- rbind(ger_insch_data, ger_types_data)
 rom_data_vor <- rbind(rom_vor_insch_data, rom_vor_types_data)
 rom_data_lat <- rbind(rom_lat_insch_data, rom_lat_types_data)
 
+# step 4: tibbles erzeugen die fuer die einzelnen gebiete relevante daten enthalten
 # funktion um tibbles zu erzeugen mit denen plot generiert werden koennen
 get_tibble_final <- function(data, ybreaks, xbreaks) {
   tibble <- data %>% 
@@ -284,6 +302,7 @@ get_tibble_final <- function(data, ybreaks, xbreaks) {
   fj
 }
 
+# step 5: erzeugen der karten mit copy & paste
 sla_fulljoin <- get_tibble_final(sla_data, 20 , 20)
 sla_insch_tibble <- sla_fulljoin %>% filter(class.x == "insch")
 ggplot(sla_insch_tibble, aes(x, y, fill = bin_ratio_insch, group = bin_ratio_insch)) +
